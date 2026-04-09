@@ -8,3 +8,8 @@
 
   ➜  Local:   http://localhost:5555/
   ➜  Network: http://192.168.6.182:5555/
+4:41:03 PM [vite] vite.config.ts changed, restarting server...
+4:41:04 PM [vite] server restarted.
+
+  ➜  Local:   http://localhost:5555/Mi-Backup-Workspace/
+  ➜  Network: http://192.168.6.182:5555/Mi-Backup-Workspace/
