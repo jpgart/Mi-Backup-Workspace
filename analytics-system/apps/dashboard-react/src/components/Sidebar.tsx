@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Zap, Filter, RefreshCcw, Info, Activity, Calendar } from 'lucide-react';
+import { Zap, Filter, RefreshCcw, Info, Activity, Calendar, X } from 'lucide-react';
 import { FilterState } from '../types';
 
 interface SidebarProps {
@@ -9,6 +9,8 @@ interface SidebarProps {
   insights?: string[];
   dataCount: number;
   availableRange?: { start: string; end: string };
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = memo(({ 
@@ -17,7 +19,9 @@ const Sidebar: React.FC<SidebarProps> = memo(({
   onReset,
   insights = [],
   dataCount = 0,
-  availableRange = { start: '', end: '' }
+  availableRange = { start: '', end: '' },
+  isOpen = false,
+  onClose
 }) => {
   const [localFilters, setLocalFilters] = useState<FilterState>(currentFilters);
 
@@ -33,15 +37,30 @@ const Sidebar: React.FC<SidebarProps> = memo(({
   const hasChanges = localFilters.start !== currentFilters.start || localFilters.end !== currentFilters.end;
 
   return (
-    <aside className="w-[300px] min-w-[300px] bg-[var(--bg-card)] border-r border-[var(--border)] p-7 flex flex-col gap-7 sticky top-0 h-screen overflow-y-auto">
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 bg-[var(--accent-gradient)] rounded-xl flex items-center justify-center shadow-[0_0_12px_rgba(0,229,255,0.3)]">
-          <Zap size={20} className="text-black" />
+    <aside className={`
+      w-[300px] min-w-[300px] bg-[var(--bg-card)] border-r border-[var(--border)] p-7 flex flex-col gap-7 
+      fixed lg:sticky top-0 left-0 h-screen overflow-y-auto z-[50] transition-transform duration-300
+      ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+    `}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-[var(--accent-gradient)] rounded-xl flex items-center justify-center shadow-[0_0_12px_rgba(0,229,255,0.3)]">
+            <Zap size={20} className="text-black" />
+          </div>
+          <div>
+            <div className="font-['Outfit'] text-[1.2rem] font-bold text-[var(--text-primary)] leading-none">Analytics</div>
+            <div className="text-[0.65rem] text-[var(--text-muted)] uppercase tracking-wider">Energía · Eficiencia</div>
+          </div>
         </div>
-        <div>
-          <div className="font-['Outfit'] text-[1.2rem] font-bold text-[var(--text-primary)] leading-none">Analytics</div>
-          <div className="text-[0.65rem] text-[var(--text-muted)] uppercase tracking-wider">Energía · Eficiencia</div>
-        </div>
+        
+        {onClose && (
+          <button 
+            onClick={onClose}
+            className="lg:hidden p-2 text-[var(--text-muted)] hover:text-white transition-colors"
+          >
+            <X size={24} />
+          </button>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
@@ -60,30 +79,38 @@ const Sidebar: React.FC<SidebarProps> = memo(({
           <label className="text-[0.75rem] text-[var(--text-muted)] flex items-center gap-2">
             <Calendar size={12} /> Desde
           </label>
-          <input 
-            type="month" 
-            value={localFilters.start}
-            min={availableRange.start}
-            max={availableRange.end}
-            onChange={(e) => handleLocalChange('start', e.target.value)}
-            onClick={(e) => (e.target as any).showPicker?.()}
-            className="bg-[var(--bg-hover)] text-[var(--text-primary)] border border-[var(--border)] p-3 rounded-[var(--radius-md)] text-sm outline-none hover:border-[var(--border-hover)] focus:border-[var(--accent-primary)] transition-all cursor-pointer w-full"
-          />
+          <div className="relative">
+            <input 
+              type="month" 
+              value={localFilters.start}
+              min={availableRange.start}
+              max={availableRange.end}
+              onChange={(e) => handleLocalChange('start', e.target.value)}
+              onClick={(e) => (e.target as any).showPicker?.()}
+              className="bg-[var(--bg-hover)] text-[var(--text-primary)] border border-[var(--border)] p-3 pr-10 rounded-[var(--radius-md)] text-sm leading-tight outline-none hover:border-[var(--border-hover)] focus:border-[var(--accent-primary)] transition-all cursor-pointer w-full appearance-none"
+              style={{ fontSize: '16px' }} // Prevents iOS zoom
+            />
+            <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" />
+          </div>
         </div>
 
         <div className="flex flex-col gap-1.5 mt-1">
           <label className="text-[0.75rem] text-[var(--text-muted)] flex items-center gap-2">
             <Calendar size={12} /> Hasta
           </label>
-          <input 
-            type="month" 
-            value={localFilters.end}
-            min={availableRange.start}
-            max={availableRange.end}
-            onChange={(e) => handleLocalChange('end', e.target.value)}
-            onClick={(e) => (e.target as any).showPicker?.()}
-            className="bg-[var(--bg-hover)] text-[var(--text-primary)] border border-[var(--border)] p-3 rounded-[var(--radius-md)] text-sm outline-none hover:border-[var(--border-hover)] focus:border-[var(--accent-primary)] transition-all cursor-pointer w-full"
-          />
+          <div className="relative">
+            <input 
+              type="month" 
+              value={localFilters.end}
+              min={availableRange.start}
+              max={availableRange.end}
+              onChange={(e) => handleLocalChange('end', e.target.value)}
+              onClick={(e) => (e.target as any).showPicker?.()}
+              className="bg-[var(--bg-hover)] text-[var(--text-primary)] border border-[var(--border)] p-3 pr-10 rounded-[var(--radius-md)] text-sm leading-tight outline-none hover:border-[var(--border-hover)] focus:border-[var(--accent-primary)] transition-all cursor-pointer w-full appearance-none"
+              style={{ fontSize: '16px' }} // Prevents iOS zoom
+            />
+            <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" />
+          </div>
         </div>
         
         <div className="text-[0.65rem] text-[var(--text-muted)] italic px-1">

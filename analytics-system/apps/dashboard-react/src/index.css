@@ -130,3 +130,11 @@ input[type="month"]::-webkit-calendar-picker-indicator:hover {
   opacity: 0;
   animation: fadeIn 0.5s ease-out forwards;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

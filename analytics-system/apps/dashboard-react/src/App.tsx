@@ -7,7 +7,7 @@ import EnergyPanel from './components/panels/EnergyPanel';
 import CompensationPanel from './components/panels/CompensationPanel';
 import InvoicesTable from './components/panels/InvoicesTable';
 import { AnalyticsEngine } from './lib/analytics-engine';
-import { Download, LayoutDashboard, Loader2 } from 'lucide-react';
+import { Download, LayoutDashboard, Loader2, Menu, X } from 'lucide-react';
 import { InvoiceData, DashboardStats, FilterState } from './types';
 
 function App() {
@@ -15,6 +15,7 @@ function App() {
   const [filters, setFilters] = useState<FilterState>({ start: '', end: '' });
   const [activeTab, setActiveTab] = useState<string>('finance');
   const [isPending, startTransition] = useTransition();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Initialize filters when range is loaded
   useEffect(() => {
@@ -104,30 +105,47 @@ function App() {
     <div className="flex min-h-screen bg-[var(--bg-main)]">
       <Sidebar 
         currentFilters={filters}
-        onApply={handleApplyFilters}
-        onReset={handleReset}
+        onApply={(f) => { handleApplyFilters(f); setIsSidebarOpen(false); }}
+        onReset={() => { handleReset(); setIsSidebarOpen(false); }}
         insights={insights}
         dataCount={filteredData.length}
         availableRange={dateRange}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
-      <main className={`flex-1 p-10 overflow-x-auto min-w-0 transition-opacity duration-300 ${isPending ? 'opacity-60 cursor-wait' : 'opacity-100'}`}>
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[40] lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <main className={`flex-1 p-6 md:p-10 overflow-x-auto min-w-0 transition-opacity duration-300 ${isPending ? 'opacity-60 cursor-wait' : 'opacity-100'}`}>
         <header className="flex justify-between items-start mb-10 flex-wrap gap-4">
-          <div className="animate-fade-in">
-            <h1 className="font-['Outfit'] text-4xl font-extrabold mb-1 bg-gradient-to-br from-slate-200 to-slate-400 bg-clip-text text-transparent tracking-tight">
-              Industria Mecánica VOGT
-            </h1>
-            <p className="text-[var(--text-secondary)] text-sm font-medium">Dashboard de Eficiencia Energética · v2.0 TypeScript</p>
+          <div className="flex items-center gap-4 animate-fade-in">
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden p-3 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl text-[var(--accent-primary)] hover:border-[var(--accent-primary)] transition-all"
+            >
+              <Menu size={24} />
+            </button>
+            <div>
+              <h1 className="font-['Outfit'] text-2xl md:text-4xl font-extrabold mb-1 bg-gradient-to-br from-slate-200 to-slate-400 bg-clip-text text-transparent tracking-tight">
+                Industria Mecánica VOGT
+              </h1>
+              <p className="text-[var(--text-secondary)] text-xs md:text-sm font-medium">Dashboard de Eficiencia Energética · v2.0 TypeScript</p>
+            </div>
           </div>
           <div className="flex items-center gap-4 bg-[var(--bg-card)] border border-[var(--border)] px-4 py-2.5 rounded-xl shadow-sm">
             <div className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${isPending ? 'bg-[var(--warning)]' : 'bg-[var(--success)]'} animate-[pulseGlow_2s_infinite]`}></div>
-              <span className="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-widest">
+              <span className="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-widest leading-none">
                 {isPending ? 'Procesando...' : 'Sistema Listo'}
               </span>
             </div>
             <div className="w-px h-4 bg-[var(--border)]"></div>
-            <button className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-white transition-colors text-xs font-bold uppercase tracking-wide">
+            <button className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-white transition-colors text-[0.6rem] md:text-xs font-bold uppercase tracking-wide">
               <Download size={14} /> Reporte PDF
             </button>
           </div>
@@ -135,7 +153,7 @@ function App() {
 
         <KPIGrid stats={stats} />
 
-        <nav className="flex gap-1.5 bg-[var(--bg-card)] border border-[var(--border)] p-1.5 rounded-2xl w-fit mb-8 shadow-sm">
+        <nav className="flex gap-1.5 bg-[var(--bg-card)] border border-[var(--border)] p-1.5 rounded-2xl w-full md:w-fit mb-8 shadow-sm overflow-x-auto no-scrollbar">
           {[
             { id: 'finance', label: '📊 Finanzas' },
             { id: 'energy', label: '⚡ Energía' },
