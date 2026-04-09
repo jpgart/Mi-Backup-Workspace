@@ -11,7 +11,7 @@ export function useAnalyticsData() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch('data/resumen.csv');
+        const res = await fetch(`${import.meta.env.BASE_URL}data/resumen.csv`);
         if (!res.ok) throw new Error('No se pudo cargar el archivo de datos');
         const csvText = await res.text();
 
