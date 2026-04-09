@@ -1,0 +1,22 @@
+{
+  "name": "enel_parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "extract": "tsx extractor.ts",
+    "reactiva": "tsx calculoReactiva.ts",
+    "consumo": "tsx Consumo_P.ts",
+    "start": "npm run extract && npm run reactiva && npm run consumo"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "csv-writer": "^1.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}

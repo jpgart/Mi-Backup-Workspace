@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analítica Energética Universal — VOGT</title>
+  <meta name="description" content="Dashboard interactivo de eficiencia energética y análisis de costos para Industria Mecánica VOGT.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Shared Theme -->
+  <link rel="stylesheet" href="../../lib/theme-factory.css">
+
+  <style>
+    /* ── Layout ── */
+    :root {
+      --sidebar-width: 270px;
+      --topbar-height: 0px;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Sidebar ── */
+    aside#sidebar {
+      width: var(--sidebar-width);
+      min-width: var(--sidebar-width);
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      padding: 1.75rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--accent-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(0,229,255,0.3);
+    }
+
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .logo-sub {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .sidebar-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .sidebar-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-select,
+    .sidebar-input {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.85rem;
+      border-radius: var(--radius-sm);
+      width: 100%;
+      font-size: 0.85rem;
+      font-family: var(--font-main);
+      cursor: pointer;
+      transition: border-color 0.2s;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .sidebar-select:hover,
+    .sidebar-input:hover {
+      border-color: var(--border-hover);
+    }
+
+    .sidebar-select:focus,
+    .sidebar-input:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px rgba(0,229,255,0.12);
+    }
+
+    /* Insight pills */
+    .insight-pill {
+      background: rgba(0, 229, 255, 0.04);
+      border-left: 2px solid var(--accent-primary);
+      padding: 0.65rem 0.85rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      transition: background 0.2s;
+    }
+
+    .insight-pill:hover {
+      background: rgba(0, 229, 255, 0.08);
+    }
+
+    /* Sidebar meta */
+    .sidebar-meta {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Main ── */
+    main#content {
+      flex: 1;
+      padding: 2rem 2.5rem;
+      overflow-x: auto;
+      min-width: 0;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-header p {
+      color: var(--text-secondary);
+      margin: 0.4rem 0 0;
+      font-size: 0.9rem;
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-md);
+      white-space: nowrap;
+      font-size: 0.82rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulseGlow 2s ease-in-out infinite;
+    }
+
+    /* ── KPI Grid ── */
+    .grid-kpi {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .kpi-trend {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* ── Tabs ── */
+    .tab-nav {
+      display: flex;
+      gap: 0.35rem;
+      margin-bottom: 1.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.35rem;
+      width: fit-content;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      font-family: var(--font-main);
+      cursor: pointer;
+      padding: 0.5rem 1.25rem;
+      border-radius: calc(var(--radius-md) - 4px);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-secondary);
+      background: var(--bg-hover);
+    }
+
+    .tab-btn.active {
+      background: var(--accent-gradient);
+      color: #000;
+    }
+
+    /* ── Tab Panels ── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Chart card ── */
+    .chart-card {
+      margin-bottom: 1.75rem;
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .chart-header h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    /* ── Action btn ── */
+    .btn-ghost {
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-family: var(--font-main);
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    /* ── Proposal Card ── */
+    .proposal-card {
+      display: none;
+      margin-bottom: 1.75rem;
+    }
+
+    .proposal-card.visible { display: block; }
+
+    .proposal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .proposal-item small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Table wrapper ── */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+    }
+
+    /* ── FP gauge ── */
+    .fp-gauge-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .fp-meter-label {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      width: 120px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fp-meter-bar {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .fp-meter-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .fp-meter-val {
+      font-size: 0.78rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      width: 45px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── Second chart row ── */
+    .chart-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .chart-container-sm {
+      height: 280px;
+      position: relative;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state span { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
+
+    /* ── Loading ── */
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      gap: 1rem;
+      transition: opacity 0.4s ease;
+    }
+
+    #loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ── */
+    @media (max-width: 1100px) {
+      .chart-row-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      body { flex-direction: column; }
+      aside#sidebar {
+        width: 100%;
+        min-width: unset;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      main#content { padding: 1.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 1.5rem; }
+      .kpi-value { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div style="color: var(--text-secondary); font-size: 0.9rem;">Cargando datos…</div>
+</div>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <div class="logo-text">Analytics</div>
+      <div class="logo-sub">Energía · Eficiencia</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Proyecto / Cliente</div>
+    <select id="project-selector" class="sidebar-select">
+      <option value="current">VOGT — Actual</option>
+    </select>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Filtrar período</div>
+    <label style="font-size:0.75rem; color:var(--text-muted); margin-bottom:2px;">Desde</label>
+    <input type="month" id="date-start" class="sidebar-input">
+    <label style="font-size:0.75rem; color:var(--text-muted); margin-bottom:2px; margin-top:4px;">Hasta</label>
+    <input type="month" id="date-end" class="sidebar-input">
+    <button id="btn-filter" class="btn-ghost" style="margin-top:0.5rem; width:100%;">Aplicar filtro</button>
+    <button id="btn-reset" class="btn-ghost" style="width:100%;">Restablecer</button>
+  </div>
+
+  <div class="sidebar-section" id="insight-container">
+    <div class="sidebar-label">Insights Rápidos</div>
+    <!-- JS Generated -->
+  </div>
+
+  <div class="sidebar-meta">
+    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;">
+      <div class="status-dot"></div>
+      <span>Datos sincronizados</span>
+    </div>
+    <div id="data-count" style="color:var(--text-muted)">—</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main id="content">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1 id="title-client">Industria Mecánica VOGT</h1>
+      <p id="subtitle">Reporte de Eficiencia Energética y Costos · Datos históricos</p>
+    </div>
+    <div class="header-badge">
+      <div class="status-dot"></div>
+      <span id="data-range-label">Cargando…</span>
+      <button class="btn-ghost" id="btn-export-csv" style="margin-left:0.5rem;">⬇ CSV</button>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid-kpi">
+    <div class="glass-card kpi-card animate-fade-in" style="--delay:0s">
+      <div class="kpi-label">Gasto Total Período</div>
+      <div class="kpi-value" id="kpi-total-monto">—</div>
+      <div class="kpi-trend" id="kpi-total-var">Cargando…</div>
+    </div>
+    <div class="glass-card kpi-card animate-fade-in" style="animation-delay:0.07s">
+      <div class="kpi-label">Consumo Activa</div>
+      <div class="kpi-value" id="kpi-total-energy">— kWh</div>
+      <div class="kpi-trend" id="kpi-energy-avg">Cargando…</div>
+    </div>
+    <div class="glass-card kpi-card animate-fade-in" style="animation-delay:0.14s">
+      <div class="kpi-label">Factor de Potencia Prom.</div>
+      <div class="kpi-value" id="kpi-avg-fp">—</div>
+      <div id="kpi-fp-badge"></div>
+    </div>
+    <div class="glass-card kpi-card animate-fade-in" style="animation-delay:0.21s">
+      <div class="kpi-label">Penalización Reactiva</div>
+      <div class="kpi-value" id="kpi-penalty" style="background:linear-gradient(135deg, #ef4444, #b91c1c); -webkit-background-clip:text; background-clip:text;">—</div>
+      <div class="kpi-trend" id="kpi-penalty-pct">% del gasto total</div>
+    </div>
+    <div class="glass-card kpi-card animate-fade-in" style="animation-delay:0.28s">
+      <div class="kpi-label">Facturas Analizadas</div>
+      <div class="kpi-value" id="kpi-invoices">—</div>
+      <div class="kpi-trend" id="kpi-years-span">Período cargando…</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-nav" role="tablist">
+    <button class="tab-btn active" id="tab-finance"    role="tab" onclick="switchTab('finance', this)">📊 Finanzas</button>
+    <button class="tab-btn"        id="tab-energy"     role="tab" onclick="switchTab('energy', this)">⚡ Energía</button>
+    <button class="tab-btn"        id="tab-efficiency" role="tab" onclick="switchTab('efficiency', this)">🔋 Compensación</button>
+    <button class="tab-btn"        id="tab-table"      role="tab" onclick="switchTab('table', this)">📋 Facturas</button>
+  </div>
+
+  <!-- ═ Tab: Finance ═ -->
+  <div class="tab-panel active" id="panel-finance">
+    <div class="glass-card chart-card">
+      <div class="chart-header">
+        <h3>Evolución de Gasto y Consumo</h3>
+        <div style="display:flex;gap:0.5rem">
+          <button class="btn-ghost" onclick="toggleChartType()">Cambiar tipo</button>
+          <button class="btn-ghost" onclick="downloadChart('mainChart')">⬇ PNG</button>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="mainChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-row-2">
+      <div class="glass-card chart-card" style="margin-bottom:0">
+        <div class="chart-header"><h3>Desglose por Año</h3></div>
+        <div class="chart-container-sm">
+          <canvas id="yearChart"></canvas>
+        </div>
+      </div>
+      <div class="glass-card chart-card" style="margin-bottom:0">
+        <div class="chart-header"><h3>Componentes del Costo Neto</h3></div>
+        <div class="chart-container-sm">
+          <canvas id="costBreakdownChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═ Tab: Energy ═ -->
+  <div class="tab-panel" id="panel-energy">
+    <div class="glass-card chart-card">
+      <div class="chart-header">
+        <h3>Consumo Activa vs Reactiva (kWh / kVARh)</h3>
+        <button class="btn-ghost" onclick="downloadChart('energyChart')">⬇ PNG</button>
+      </div>
+      <div class="chart-container">
+        <canvas id="energyChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-row-2">
+      <div class="glass-card chart-card" style="margin-bottom:0">
+        <div class="chart-header"><h3>Factor de Potencia por Período</h3></div>
+        <div class="chart-container-sm">
+          <canvas id="fpChart"></canvas>
+        </div>
+      </div>
+      <div class="glass-card" style="margin-bottom:0">
+        <div class="chart-header" style="margin-bottom:1rem"><h3>Ranking FP por Factura</h3></div>
+        <div id="fp-gauge-list" style="max-height:240px; overflow-y:auto; padding-right:4px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═ Tab: Compensation ═ -->
+  <div class="tab-panel" id="panel-efficiency">
+    <!-- Proposal card -->
+    <div class="glass-card proposal-card" id="proposal-container" style="border-color: var(--critical); display:none;">
+      <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+        <span style="font-size:1.4rem;">🛠️</span>
+        <h3 style="margin:0; color:var(--critical);">Propuesta de Compensación — Banco de Condensadores</h3>
+      </div>
+      <p style="color:var(--text-secondary); margin:0.5rem 0 1rem; font-size:0.88rem;">
+        Basado en el peor Factor de Potencia registrado. La implementación de un banco de condensadores eliminaría las multas por potencia reactiva.
+      </p>
+      <div class="proposal-grid">
+        <div class="proposal-item">
+          <div class="kpi-label">Banco Sugerido</div>
+          <div class="kpi-value" style="background: linear-gradient(135deg, var(--critical), #6d28d9); -webkit-background-clip:text; background-clip:text;" id="proposal-bank">— kVAr</div>
+          <small>Estimación basada en histórico de carga</small>
+        </div>
+        <div class="proposal-item">
+          <div class="kpi-label">Ahorro Mensual Estimado</div>
+          <div class="kpi-value" style="background: linear-gradient(135deg, var(--success), #059669); -webkit-background-clip:text; background-clip:text;" id="proposal-saving">—</div>
+          <small>Eliminando multas por bajo FP</small>
+        </div>
+        <div class="proposal-item">
+          <div class="kpi-label">Retorno de Inversión</div>
+          <div class="kpi-value" style="font-size:1.6rem">~ 4–8 meses</div>
+          <small>Estimación estándar de mercado</small>
+        </div>
+        <div class="proposal-item">
+          <div class="kpi-label">FP Objetivo</div>
+          <div class="kpi-value" style="font-size:1.6rem">0.98</div>
+          <small>Norma técnica chilena NTD-N°5</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card chart-card">
+      <div class="chart-header">
+        <h3>Análisis de Multas y Penalizaciones</h3>
+        <button class="btn-ghost" onclick="downloadChart('penaltyChart')">⬇ PNG</button>
+      </div>
+      <div class="chart-container">
+        <canvas id="penaltyChart"></canvas>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="chart-header"><h3>Clasificación FP por Período</h3></div>
+      <div id="fp-clasif-list" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+    </div>
+  </div>
+
+  <!-- ═ Tab: Tables ═ -->
+  <div class="tab-panel" id="panel-table">
+    <div class="glass-card">
+      <div class="chart-header">
+        <h3>Detalle de Facturas</h3>
+        <button class="btn-ghost" id="btn-export-table">⬇ Exportar CSV</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table" id="invoices-table">
+          <thead>
+            <tr>
+              <th>N° Factura</th>
+              <th>Fecha</th>
+              <th>kWh</th>
+              <th>kVARh</th>
+              <th>FP</th>
+              <th>Clasificación</th>
+              <th>Monto Neto</th>
+              <th>Monto Total</th>
+              <th>Multa Reactiva</th>
+              <th>Archivo</th>
+            </tr>
+          </thead>
+          <tbody id="invoices-tbody">
+            <tr><td colspan="10" class="empty-state"><span>⏳</span>Cargando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ── Scripts ── -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<script type="module">
+  import { AnalyticsEngine } from '../../lib/analytics-engine.js';
+
+  /* ═══════════════════════════════════════════════════════
+     State
+  ═══════════════════════════════════════════════════════ */
+  let allData    = [];   // normalized NormalizedData[]
+  let filtered   = [];   // currently visible slice
+  let charts     = {};   // chart instances
+  let mainChartType = 'line';
+
+  /* ═══════════════════════════════════════════════════════
+     Initialization
+  ═══════════════════════════════════════════════════════ */
+  async function init() {
+    try {
+      const res     = await fetch('../../data/VOGT - Resumen_Cliente.csv');
+      const csvText = await res.text();
+
+      Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        complete: ({ data }) => {
+          allData  = data.map(r => AnalyticsEngine.normalize(r)).filter(Boolean);
+          filtered = [...allData];
+          initDateFilters();
+          renderAll();
+          hideLoading();
+        }
+      });
+    } catch (err) {
+      console.error('Error cargando datos:', err);
+      document.getElementById('loading-overlay').innerHTML =
+        `<div style="color:var(--danger);text-align:center;padding:2rem">
+          <div style="font-size:2rem;margin-bottom:1rem">⚠️</div>
+          <strong>Error cargando datos</strong><br>
+          <small style="color:var(--text-muted)">${err.message}<br>Asegúrate de servir el proyecto con un servidor HTTP local.</small>
+        </div>`;
+    }
+  }
+
+  function hideLoading() {
+    const overlay = document.getElementById('loading-overlay');
+    overlay.classList.add('hidden');
+    setTimeout(() => overlay.remove(), 500);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Filters
+  ═══════════════════════════════════════════════════════ */
+  function initDateFilters() {
+    if (!allData.length) return;
+    const sorted = [...allData].sort((a, b) => a.date - b.date);
+    const firstDate = sorted[0].date;
+    const lastDate  = sorted[sorted.length - 1].date;
+
+    const toMonth = (d) =>
+      `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+    document.getElementById('date-start').value = toMonth(firstDate);
+    document.getElementById('date-end').value   = toMonth(lastDate);
+  }
+
+  document.getElementById('btn-filter').addEventListener('click', applyFilter);
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    initDateFilters();
+    filtered = [...allData];
+    renderAll();
+  });
+
+  function applyFilter() {
+    const startVal = document.getElementById('date-start').value;
+    const endVal   = document.getElementById('date-end').value;
+
+    filtered = allData.filter(d => {
+      const m = `${d.date.getFullYear()}-${String(d.date.getMonth() + 1).padStart(2, '0')}`;
+      return (!startVal || m >= startVal) && (!endVal || m <= endVal);
+    });
+
+    renderAll();
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Render All
+  ═══════════════════════════════════════════════════════ */
+  function renderAll() {
+    const sorted = [...filtered].sort((a, b) => a.date - b.date);
+    renderKPIs(sorted);
+    renderInsights(sorted);
+    renderMainChart(sorted);
+    renderYearChart(sorted);
+    renderCostBreakdownChart(sorted);
+    renderEnergyChart(sorted);
+    renderFpChart(sorted);
+    renderFpGaugeList(sorted);
+    renderPenaltyChart(sorted);
+    renderFpClasif(sorted);
+    renderTable(sorted);
+    renderProposal(sorted);
+    updateMeta(sorted);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     KPIs
+  ═══════════════════════════════════════════════════════ */
+  function renderKPIs(sorted) {
+    if (!sorted.length) return;
+
+    const totalMonto   = sorted.reduce((s, d) => s + d.totalMonto, 0);
+    const totalEnergy  = sorted.reduce((s, d) => s + d.energyKwh, 0);
+    const avgFp        = sorted.reduce((s, d) => s + d.fp, 0) / sorted.length;
+    const totalPenalty = sorted.reduce((s, d) => s + d.penaltyMonto, 0);
+
+    // Variación MoM del gasto
+    const last = sorted[sorted.length - 1];
+    const prev = sorted.length > 1 ? sorted[sorted.length - 2] : null;
+    let varText = '—';
+    if (prev && prev.totalMonto > 0) {
+      const pct = ((last.totalMonto - prev.totalMonto) / prev.totalMonto) * 100;
+      const arrow = pct >= 0 ? '▲' : '▼';
+      const color = pct > 0 ? 'var(--danger)' : 'var(--success)';
+      varText = `<span style="color:${color}">${arrow} ${Math.abs(pct).toFixed(1)}%</span> vs mes anterior`;
+    }
+
+    setText('kpi-total-monto', `$${Math.round(totalMonto).toLocaleString('es-CL')}`);
+    setHTML('kpi-total-var', varText);
+
+    setText('kpi-total-energy', `${Math.round(totalEnergy).toLocaleString('es-CL')} kWh`);
+    setText('kpi-energy-avg',
+      `Promedio mensual: ${Math.round(totalEnergy / sorted.length).toLocaleString('es-CL')} kWh`);
+
+    setText('kpi-avg-fp', avgFp.toFixed(3));
+    const fpBadge = avgFp >= 0.98 ? ['badge-success', 'Óptimo']
+                  : avgFp >= 0.93 ? ['badge-warning', 'Aceptable']
+                  : ['badge-danger', 'Ineficiente'];
+    setHTML('kpi-fp-badge', `<span class="badge ${fpBadge[0]}">${fpBadge[1]}</span>`);
+
+    setText('kpi-penalty', `$${Math.round(totalPenalty).toLocaleString('es-CL')}`);
+    const pctPenalty = totalMonto > 0 ? ((totalPenalty / totalMonto) * 100).toFixed(2) : '0.00';
+    setText('kpi-penalty-pct', `${pctPenalty}% del gasto total`);
+
+    setText('kpi-invoices', sorted.length);
+    if (sorted.length) {
+      const y0 = sorted[0].date.getFullYear();
+      const yN = sorted[sorted.length - 1].date.getFullYear();
+      setText('kpi-years-span', y0 === yN ? `Año ${y0}` : `${y0} – ${yN}`);
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Insights
+  ═══════════════════════════════════════════════════════ */
+  function renderInsights(sorted) {
+    const container = document.getElementById('insight-container');
+    const insights  = AnalyticsEngine.getInsights(sorted);
+    container.innerHTML = '<div class="sidebar-label">Insights Rápidos</div>';
+    if (!insights.length) {
+      container.innerHTML += '<div class="insight-pill">— Sin datos suficientes —</div>';
+      return;
+    }
+    insights.forEach(text => {
+      const div = document.createElement('div');
+      div.className = 'insight-pill';
+      div.textContent = text;
+      container.appendChild(div);
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Main Chart (Finanzas)
+  ═══════════════════════════════════════════════════════ */
+  function renderMainChart(sorted) {
+    const labels  = sorted.map(d => fmtDate(d.date));
+    const montos  = sorted.map(d => d.totalMonto);
+    const kwhs    = sorted.map(d => d.energyKwh);
+
+    destroyChart('mainChart');
+    const ctx = getCtx('mainChart');
+    charts.mainChart = new Chart(ctx, {
+      type: mainChartType,
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Gasto Total ($)',
+            data: montos,
+            borderColor: '#00e5ff',
+            backgroundColor: mainChartType === 'bar'
+              ? 'rgba(0,229,255,0.4)'
+              : 'rgba(0,229,255,0.1)',
+            fill: mainChartType !== 'bar',
+            tension: 0.4,
+            yAxisID: 'y',
+            pointBackgroundColor: '#00e5ff',
+            pointRadius: 4,
+          },
+          {
+            label: 'Consumo kWh',
+            data: kwhs,
+            borderColor: '#1a6eff',
+            backgroundColor: mainChartType === 'bar'
+              ? 'rgba(26,110,255,0.4)'
+              : 'rgba(26,110,255,0.05)',
+            fill: false,
+            borderDash: mainChartType !== 'bar' ? [5, 5] : [],
+            tension: 0.4,
+            yAxisID: 'y1',
+            pointBackgroundColor: '#1a6eff',
+            pointRadius: 4,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        scales: {
+          x:  { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y:  { beginAtZero: true, position: 'left',
+                grid: { color: 'rgba(255,255,255,0.04)' },
+                ticks: { color: '#64748b', callback: v => '$' + v.toLocaleString('es-CL') } },
+          y1: { beginAtZero: true, position: 'right',
+                grid: { display: false },
+                ticks: { color: '#64748b', callback: v => v.toLocaleString('es-CL') + ' kWh' } }
+        },
+        plugins: {
+          legend: { labels: { color: '#94a3b8', usePointStyle: true } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const v = ctx.raw;
+                if (ctx.datasetIndex === 0) return ` Gasto: $${v.toLocaleString('es-CL')}`;
+                return ` Consumo: ${v.toLocaleString('es-CL')} kWh`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  window.toggleChartType = () => {
+    mainChartType = mainChartType === 'line' ? 'bar' : 'line';
+    renderMainChart([...filtered].sort((a, b) => a.date - b.date));
+  };
+
+  /* ═══════════════════════════════════════════════════════
+     Year Chart (donut)
+  ═══════════════════════════════════════════════════════ */
+  function renderYearChart(sorted) {
+    const byYear = AnalyticsEngine.groupByYear(sorted);
+    const years  = Object.keys(byYear).sort();
+    const montos = years.map(y => Math.round(byYear[y].totalMonto));
+
+    destroyChart('yearChart');
+    const ctx = getCtx('yearChart');
+    charts.yearChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: years,
+        datasets: [{
+          data: montos,
+          backgroundColor: ['#00e5ff', '#1a6eff', '#8b5cf6', '#10b981', '#f59e0b'],
+          borderColor: 'var(--bg-main)',
+          borderWidth: 3,
+          hoverOffset: 8,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#94a3b8', usePointStyle: true, padding: 12 } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` $${ctx.raw.toLocaleString('es-CL')}`
+            }
+          }
+        }
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Cost Breakdown (bar, stacked estimations from raw)
+  ═══════════════════════════════════════════════════════ */
+  function renderCostBreakdownChart(sorted) {
+    // Extract "Costo Electricidad" and "Costo Transporte" from raw if available
+    const labels    = sorted.map(d => fmtDate(d.date));
+    const electric  = sorted.map(d => {
+      const raw = d.raw;
+      const k   = Object.keys(raw).find(k => /costo.*electricidad|electricidad.*\$/i.test(k));
+      return k ? parseCLP(raw[k]) : 0;
+    });
+    const transport = sorted.map(d => {
+      const raw = d.raw;
+      const k   = Object.keys(raw).find(k => /costo.*transporte|transporte.*\$/i.test(k));
+      return k ? parseCLP(raw[k]) : 0;
+    });
+    const demand = sorted.map(d => {
+      const raw = d.raw;
+      const k   = Object.keys(raw).find(k => /demanda.*m[aá]xima/i.test(k));
+      return k ? parseCLP(raw[k]) : 0;
+    });
+
+    destroyChart('costBreakdownChart');
+    const ctx = getCtx('costBreakdownChart');
+    charts.costBreakdownChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Electricidad', data: electric,  backgroundColor: 'rgba(0,229,255,0.6)', stack: 'cost' },
+          { label: 'Transporte',   data: transport, backgroundColor: 'rgba(26,110,255,0.6)', stack: 'cost' },
+          { label: 'Demanda',      data: demand,    backgroundColor: 'rgba(139,92,246,0.6)', stack: 'cost' },
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x:  { stacked: true, ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y:  { stacked: true, beginAtZero: true,
+                grid: { color: 'rgba(255,255,255,0.04)' },
+                ticks: { color: '#64748b', callback: v => '$' + (v/1000).toFixed(0) + 'K' } }
+        },
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#94a3b8', usePointStyle: true, padding: 10 } },
+          tooltip: { callbacks: { label: (ctx) => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString('es-CL')}` } }
+        }
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Energy Chart (kWh vs kVARh)
+  ═══════════════════════════════════════════════════════ */
+  function renderEnergyChart(sorted) {
+    const labels = sorted.map(d => fmtDate(d.date));
+
+    destroyChart('energyChart');
+    const ctx = getCtx('energyChart');
+    charts.energyChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Consumo Activa (kWh)',
+            data: sorted.map(d => d.energyKwh),
+            backgroundColor: 'rgba(0,229,255,0.55)',
+            borderColor: '#00e5ff',
+            borderWidth: 1,
+            borderRadius: 4,
+          },
+          {
+            label: 'Consumo Reactiva (kVARh)',
+            data: sorted.map(d => d.reactiveKvarh),
+            backgroundColor: 'rgba(139,92,246,0.55)',
+            borderColor: '#8b5cf6',
+            borderWidth: 1,
+            borderRadius: 4,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index' },
+        scales: {
+          x:  { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y:  { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' },
+                ticks: { color: '#64748b', callback: v => v.toLocaleString('es-CL') } }
+        },
+        plugins: {
+          legend: { labels: { color: '#94a3b8', usePointStyle: true } }
+        }
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     FP Line Chart
+  ═══════════════════════════════════════════════════════ */
+  function renderFpChart(sorted) {
+    const labels = sorted.map(d => fmtDate(d.date));
+    const fps    = sorted.map(d => parseFloat(d.fp.toFixed(4)));
+
+    destroyChart('fpChart');
+    const ctx = getCtx('fpChart');
+    charts.fpChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Factor de Potencia',
+            data: fps,
+            borderColor: '#00e5ff',
+            backgroundColor: 'rgba(0,229,255,0.1)',
+            fill: true,
+            tension: 0.35,
+            pointRadius: 5,
+            pointBackgroundColor: fps.map(fp =>
+              fp >= 0.98 ? '#10b981' : fp >= 0.93 ? '#f59e0b' : '#ef4444')
+          },
+          {
+            label: 'Límite 0.93',
+            data: Array(labels.length).fill(0.93),
+            borderColor: 'rgba(239,68,68,0.5)',
+            borderDash: [6, 4],
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: false,
+          },
+          {
+            label: 'Óptimo 0.98',
+            data: Array(labels.length).fill(0.98),
+            borderColor: 'rgba(16,185,129,0.4)',
+            borderDash: [6, 4],
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y: { min: 0.80, max: 1.02,
+               grid: { color: 'rgba(255,255,255,0.04)' },
+               ticks: { color: '#64748b', callback: v => v.toFixed(2) } }
+        },
+        plugins: {
+          legend: { labels: { color: '#94a3b8', usePointStyle: true } }
+        }
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     FP Gauge List
+  ═══════════════════════════════════════════════════════ */
+  function renderFpGaugeList(sorted) {
+    const container = document.getElementById('fp-gauge-list');
+    const byFp = [...sorted].sort((a, b) => a.fp - b.fp);
+    container.innerHTML = '';
+
+    byFp.forEach(d => {
+      const pct   = Math.max(0, Math.min(100, (d.fp - 0.8) / 0.2 * 100));
+      const color = d.fp >= 0.98 ? '#10b981' : d.fp >= 0.93 ? '#f59e0b' : '#ef4444';
+      const label = d.date.toLocaleDateString('es-CL', { month: 'short', year: '2-digit' });
+
+      container.innerHTML += `
+        <div class="fp-gauge-row">
+          <div class="fp-meter-label" title="${d.sourceFile}">${label}</div>
+          <div class="fp-meter-bar">
+            <div class="fp-meter-fill" style="width:${pct}%; background:${color}"></div>
+          </div>
+          <div class="fp-meter-val" style="color:${color}">${d.fp.toFixed(3)}</div>
+        </div>`;
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Penalty Chart
+  ═══════════════════════════════════════════════════════ */
+  function renderPenaltyChart(sorted) {
+    const labels   = sorted.map(d => fmtDate(d.date));
+    const penalties= sorted.map(d => d.penaltyMonto);
+    const montos   = sorted.map(d => d.totalMonto);
+
+    destroyChart('penaltyChart');
+    const ctx = getCtx('penaltyChart');
+    charts.penaltyChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Multa Reactiva ($)',
+            data: penalties,
+            backgroundColor: 'rgba(239,68,68,0.6)',
+            borderColor: '#ef4444',
+            borderWidth: 1,
+            borderRadius: 4,
+            yAxisID: 'y',
+          },
+          {
+            label: 'Gasto Total ($)',
+            data: montos,
+            type: 'line',
+            borderColor: 'rgba(100,116,139,0.5)',
+            borderDash: [4,4],
+            pointRadius: 0,
+            fill: false,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index' },
+        scales: {
+          x:  { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y:  { beginAtZero: true, position: 'left',
+                grid: { color: 'rgba(255,255,255,0.04)' },
+                ticks: { color: '#64748b', callback: v => '$' + v.toLocaleString('es-CL') } },
+          y1: { beginAtZero: true, position: 'right',
+                grid: { display: false },
+                ticks: { color: '#4a5a72', callback: v => '$' + (v/1e6).toFixed(1) + 'M' } }
+        },
+        plugins: {
+          legend: { labels: { color: '#94a3b8', usePointStyle: true } }
+        }
+      }
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     FP Clasif List (tab efficiency)
+  ═══════════════════════════════════════════════════════ */
+  function renderFpClasif(sorted) {
+    const container = document.getElementById('fp-clasif-list');
+    container.innerHTML = '';
+
+    sorted.forEach(d => {
+      const color = d.fp >= 0.98 ? 'var(--success)' : d.fp >= 0.93 ? 'var(--warning)' : 'var(--danger)';
+      const badge = d.fp >= 0.98 ? 'badge-success'
+                  : d.fp >= 0.93 ? 'badge-warning' : 'badge-danger';
+      const clasif = d.fp >= 0.98 ? 'Óptimo' : d.fp >= 0.93 ? 'Aceptable' : 'Ineficiente';
+
+      container.innerHTML += `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:1rem;">
+            <div style="width:3px;height:28px;background:${color};border-radius:2px;flex-shrink:0"></div>
+            <div>
+              <div style="font-size:0.88rem;font-weight:500">${fmtDateLong(d.date)}</div>
+              <div style="font-size:0.75rem;color:var(--text-muted)">${d.sourceFile}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:1rem;">
+            <span style="font-weight:700;color:${color}">${d.fp.toFixed(4)}</span>
+            <span class="badge ${badge}">${clasif}</span>
+            ${d.penaltyMonto > 0
+              ? `<span class="badge badge-danger">Multa $${d.penaltyMonto.toLocaleString('es-CL')}</span>`
+              : ''}
+          </div>
+        </div>`;
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Proposal Card
+  ═══════════════════════════════════════════════════════ */
+  function renderProposal(sorted) {
+    const byFp = [...sorted].sort((a, b) => a.fp - b.fp);
+    const worst = byFp[0];
+    const container = document.getElementById('proposal-container');
+
+    if (worst && worst.fp < 0.93) {
+      const prop = AnalyticsEngine.calculateCapacitor(worst);
+      container.style.display = 'block';
+      setText('proposal-bank',   `${prop.requiredKvar} kVAr`);
+      setText('proposal-saving', `$${prop.estimatedSavingMonthly.toLocaleString('es-CL')}/mes`);
+    } else {
+      container.style.display = 'none';
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Table
+  ═══════════════════════════════════════════════════════ */
+  function renderTable(sorted) {
+    const tbody = document.getElementById('invoices-tbody');
+    if (!sorted.length) {
+      tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state"><span>📭</span>Sin datos para el filtro aplicado</div></td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = sorted.map(d => {
+      const fpColor = d.fp >= 0.98 ? 'var(--success)' : d.fp >= 0.93 ? 'var(--warning)' : 'var(--danger)';
+      const badge   = d.fp >= 0.98 ? 'badge-success'
+                    : d.fp >= 0.93 ? 'badge-warning' : 'badge-danger';
+      return `
+        <tr>
+          <td style="font-variant-numeric: tabular-nums; color:var(--text-muted)">${d.invoiceNum}</td>
+          <td>${d.date.toLocaleDateString('es-CL', {day:'2-digit', month:'short', year:'numeric'})}</td>
+          <td style="text-align:right">${d.energyKwh.toLocaleString('es-CL')}</td>
+          <td style="text-align:right">${d.reactiveKvarh.toLocaleString('es-CL')}</td>
+          <td style="text-align:right;color:${fpColor};font-weight:600">${d.fp.toFixed(4)}</td>
+          <td><span class="badge ${badge}">${d.clasif}</span></td>
+          <td style="text-align:right">$${d.netMonto.toLocaleString('es-CL')}</td>
+          <td style="text-align:right;font-weight:600">$${d.totalMonto.toLocaleString('es-CL')}</td>
+          <td style="text-align:right;color:${d.penaltyMonto > 0 ? 'var(--danger)' : 'var(--text-muted)'}">
+            ${d.penaltyMonto > 0 ? '$' + d.penaltyMonto.toLocaleString('es-CL') : '—'}
+          </td>
+          <td style="font-size:0.75rem;color:var(--text-muted)">${d.sourceFile}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Meta / data-range label
+  ═══════════════════════════════════════════════════════ */
+  function updateMeta(sorted) {
+    const cnt     = sorted.length;
+    const countEl = document.getElementById('data-count');
+    const rangeEl = document.getElementById('data-range-label');
+
+    if (!cnt) {
+      countEl && (countEl.textContent = 'Sin datos');
+      rangeEl && (rangeEl.textContent = 'Sin datos');
+      return;
+    }
+
+    const first = sorted[0].date;
+    const last  = sorted[sorted.length - 1].date;
+    countEl && (countEl.textContent = `${cnt} factura${cnt !== 1 ? 's' : ''} cargada${cnt !== 1 ? 's' : ''}`);
+    rangeEl && (rangeEl.textContent =
+      `${fmtDateLong(first)} — ${fmtDateLong(last)}`);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Tab Switching
+  ═══════════════════════════════════════════════════════ */
+  window.switchTab = (tab, btn) => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`panel-${tab}`).classList.add('active');
+  };
+
+  /* ═══════════════════════════════════════════════════════
+     Export helpers
+  ═══════════════════════════════════════════════════════ */
+  window.downloadChart = (chartId) => {
+    const c = document.getElementById(chartId);
+    if (!c) return;
+    const a = document.createElement('a');
+    a.href = c.toDataURL('image/png');
+    a.download = `${chartId}-${new Date().toISOString().slice(0,10)}.png`;
+    a.click();
+  };
+
+  document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
+  document.getElementById('btn-export-table').addEventListener('click', exportCSV);
+
+  function exportCSV() {
+    const sorted = [...filtered].sort((a, b) => a.date - b.date);
+    const headers = ['N° Factura','Fecha','kWh','kVARh','FP','Clasificación','Monto Neto','Monto Total','Multa Reactiva','Archivo'];
+    const rows = sorted.map(d => [
+      d.invoiceNum,
+      d.date.toLocaleDateString('es-CL'),
+      d.energyKwh, d.reactiveKvarh,
+      d.fp.toFixed(4), d.clasif,
+      d.netMonto, d.totalMonto, d.penaltyMonto,
+      d.sourceFile
+    ]);
+    const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = 'VOGT-datos-filtrados.csv'; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Utilities
+  ═══════════════════════════════════════════════════════ */
+  const getCtx    = (id) => document.getElementById(id).getContext('2d');
+  const destroyChart = (id) => { if (charts[id]) { charts[id].destroy(); charts[id] = null; } };
+  const setText   = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const setHTML   = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+  const fmtDate   = (d) => d.toLocaleDateString('es-CL', { month: 'short', year: '2-digit' });
+  const fmtDateLong = (d) => d.toLocaleDateString('es-CL', { month: 'long', year: 'numeric' });
+  const parseCLP  = (v) => {
+    if (!v) return 0;
+    return parseFloat(String(v).replace(/\./g, '').replace(/,/g, '.').replace(/[^0-9.-]/g, '')) || 0;
+  };
+
+  /* Chart.js defaults */
+  Chart.defaults.color = '#64748b';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+  // Boot
+  init();
+</script>
+</body>
+</html>

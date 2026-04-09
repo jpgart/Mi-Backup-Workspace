@@ -1,0 +1,5 @@
+Archivo Fuente,N° Factura,N° Medidor,Propiedad,Constante,Lectura Anterior,Lectura Actual,Consumo kWh
+Ago 2022.json,26218922,0000082475,Compañía,"300,00","81127,000","81279,000",45600
+Ago 2022.json,26218922,0000082475R,Compañía,"300,00","27117,000","27193,000",22800
+Ago 2023.json,28917299,0011268624,Compañía,"1000,00","0,000","135,805",135805
+Ago 2023.json,28917299,0011268624R,Compañía,"1000,00","0,000","54,380",54380

@@ -1,0 +1,23 @@
+{
+  "name": "invoice-pipeline",
+  "version": "1.0.0",
+  "description": "Pipeline de procesamiento de facturas eléctricas chilenas (Enel). Parsea PDFs, extrae datos y genera análisis.",
+  "main": "src/main.ts",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "parse": "tsx src/main.ts --only-parse",
+    "analyze": "tsx src/main.ts --only-analyze"
+  },
+  "keywords": ["enel", "invoice", "parser", "chile"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "@llamaindex/liteparse": "file:../light-parse-local",
+    "csv-writer": "^1.6.0"
+  }
+}

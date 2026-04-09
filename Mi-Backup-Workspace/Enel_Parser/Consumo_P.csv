@@ -1,0 +1,27 @@
+Archivo Fuente,N° Factura,Concepto,Dato Medida (Paréntesis),Gasto Real (CLP)
+Ago 2022.json,26218922,Administración del servicio,,669
+Ago 2022.json,26218922,Electricidad Consumida,45600kWh,2.866.744
+Ago 2022.json,26218922,Cargo por Servicio Público,,23.164
+Ago 2022.json,26218922,Transporte de electricidad,,565.623
+Ago 2022.json,26218922,Arriendo Medidor,,28.063
+Ago 2022.json,26218922,Dem. Horas punta,"78,000kW",411.575
+Ago 2022.json,26218922,Dem Max.,"169,500kW",223.925
+Ago 2022.json,26218922,Multa por consumo reactivo,,219.598
+Ago 2022.json,26218922,Total Monto Neto,,4.316.197
+Ago 2022.json,26218922,Total I.V.A.,19%,820.077
+Ago 2022.json,26218922,Monto Exento,,23.164
+Ago 2022.json,26218922,Monto Total,,5.159.438
+Ago 2022.json,26218922,Suma Gasto Real (Calculada),,5.159.438
+Ago 2022.json,26218922,Dato Real (Extraído de JSON),,5.159.438
+Ago 2022.json,26218922,Diferencia Suma vs Real,,0
+Ago 2023.json,28917299,Electricidad Consumida,135805kWh,361.241
+Ago 2023.json,28917299,Dem.Horas Punta PDx,"102,000kW",37.212
+Ago 2023.json,28917299,Demanda Max. Sumi. PDx,"259,000kW",472.465
+Ago 2023.json,28917299,Cargo Fijo Mensual PDx,,669
+Ago 2023.json,28917299,Total Monto Neto,,871.587
+Ago 2023.json,28917299,Total I.V.A.,19%,165.602
+Ago 2023.json,28917299,Monto Total,,1.037.189
+Ago 2023.json,28917299,Saldo anterior,,2.281.234
+Ago 2023.json,28917299,Suma Gasto Real (Calculada),,3.318.423
+Ago 2023.json,28917299,Dato Real (Extraído de JSON),,3.318.423
+Ago 2023.json,28917299,Diferencia Suma vs Real,,0

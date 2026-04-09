@@ -1,0 +1,286 @@
+N° Factura,Archivo Fuente,Concepto,Dato Medida (Paréntesis),Gasto Real (CLP)
+26218922,Ago 2022 - VOGT.json,Administración del servicio,,669
+26218922,Ago 2022 - VOGT.json,Electricidad Consumida,45600kWh,2.866.744
+26218922,Ago 2022 - VOGT.json,Cargo por Servicio Público,,23.164
+26218922,Ago 2022 - VOGT.json,Transporte de electricidad,,565.623
+26218922,Ago 2022 - VOGT.json,Arriendo Medidor,,28.063
+26218922,Ago 2022 - VOGT.json,Dem. Horas punta,"78,000kW",411.575
+26218922,Ago 2022 - VOGT.json,Dem Max.,"169,500kW",223.925
+26218922,Ago 2022 - VOGT.json,Multa por consumo reactivo,,219.598
+26218922,Ago 2022 - VOGT.json,Total Monto Neto,,4.316.197
+26218922,Ago 2022 - VOGT.json,Total I.V.A.,19%,820.077
+26218922,Ago 2022 - VOGT.json,Monto Exento,,23.164
+26218922,Ago 2022 - VOGT.json,Monto Total,,5.159.438
+26218922,Ago 2022 - VOGT.json,Suma Gasto Real (Calculada),,5.159.438
+26218922,Ago 2022 - VOGT.json,Dato Real (Extraído de JSON),,5.159.438
+26218922,Ago 2022 - VOGT.json,Diferencia Suma vs Real,,0
+28917299,Ago 2023 - VOGT.json,Electricidad Consumida,135805kWh,361.241
+28917299,Ago 2023 - VOGT.json,Dem.Horas Punta PDx,"102,000kW",37.212
+28917299,Ago 2023 - VOGT.json,Demanda Max. Sumi. PDx,"259,000kW",472.465
+28917299,Ago 2023 - VOGT.json,Cargo Fijo Mensual PDx,,669
+28917299,Ago 2023 - VOGT.json,Total Monto Neto,,871.587
+28917299,Ago 2023 - VOGT.json,Total I.V.A.,19%,165.602
+28917299,Ago 2023 - VOGT.json,Monto Total,,1.037.189
+28917299,Ago 2023 - VOGT.json,Saldo anterior,,2.281.234
+28917299,Ago 2023 - VOGT.json,Suma Gasto Real (Calculada),,3.318.423
+28917299,Ago 2023 - VOGT.json,Dato Real (Extraído de JSON),,1.037.189
+28917299,Ago 2023 - VOGT.json,Diferencia Suma vs Real,,2.281.234
+31061687,Agosto 2024 - VOGT.json,Electricidad Consumida,30989kWh,956.803
+31061687,Agosto 2024 - VOGT.json,Cargo por compra de potencia,"97,115kW",12.585
+31061687,Agosto 2024 - VOGT.json,Dem.Horas Punta PDx,"112,000kW",38.791
+31061687,Agosto 2024 - VOGT.json,Demanda Max. Sumi. PDx,"343,000kW",593.997
+31061687,Agosto 2024 - VOGT.json,Cargo Fijo Mensual PDx,,695
+31061687,Agosto 2024 - VOGT.json,Total Monto Neto,,702.871
+31061687,Agosto 2024 - VOGT.json,Total I.V.A.,19%,133.545
+31061687,Agosto 2024 - VOGT.json,Monto Total,,836.416
+31061687,Agosto 2024 - VOGT.json,LA wiw.enel.cl,,600
+31061687,Agosto 2024 - VOGT.json,E Aplicación Móvil,,9
+31061687,Agosto 2024 - VOGT.json,Suma Gasto Real (Calculada),,1.737.025
+31061687,Agosto 2024 - VOGT.json,Dato Real (Extraído de JSON),,836.416
+31061687,Agosto 2024 - VOGT.json,Diferencia Suma vs Real,,900.609
+26923948,Dic 2022 - VOGT.json,Administración del servicio,,669
+26923948,Dic 2022 - VOGT.json,Electricidad Consumida,39600kWh,2.489.541
+26923948,Dic 2022 - VOGT.json,Cargo por Servicio Público,,39.483
+26923948,Dic 2022 - VOGT.json,Transporte de electricidad,,491.198
+26923948,Dic 2022 - VOGT.json,Arriendo Medidor,,29.390
+26923948,Dic 2022 - VOGT.json,Dem. Horas punta,"88,500kW",466.979
+26923948,Dic 2022 - VOGT.json,Dem Max.,"183,000kW",241.760
+26923948,Dic 2022 - VOGT.json,Total Monto Neto,,3.719.537
+26923948,Dic 2022 - VOGT.json,Total I.V.A.,19%,706.712
+26923948,Dic 2022 - VOGT.json,Monto Exento,,39.483
+26923948,Dic 2022 - VOGT.json,Monto Total,,4.465.732
+26923948,Dic 2022 - VOGT.json,Suma Gasto Real (Calculada),,4.465.732
+26923948,Dic 2022 - VOGT.json,Dato Real (Extraído de JSON),,4.465.732
+26923948,Dic 2022 - VOGT.json,Diferencia Suma vs Real,,0
+29530021,Dic 2023 - VOGT.json,Electricidad Consumida,38283kWh,101.833
+29530021,Dic 2023 - VOGT.json,Dem.Horas Punta PDx,"97,500kW",25.760
+29530021,Dic 2023 - VOGT.json,Demanda Max. Sumi. PDx,"247,000kW",326.309
+29530021,Dic 2023 - VOGT.json,Cargo Fijo Mensual PDx,,669
+29530021,Dic 2023 - VOGT.json,Total Monto Neto,,454.571
+29530021,Dic 2023 - VOGT.json,Total I.V.A.,19%,86.368
+29530021,Dic 2023 - VOGT.json,Monto Total,,540.939
+29530021,Dic 2023 - VOGT.json,Suma Gasto Real (Calculada),,540.939
+29530021,Dic 2023 - VOGT.json,Dato Real (Extraído de JSON),,540.939
+29530021,Dic 2023 - VOGT.json,Diferencia Suma vs Real,,0
+29736660,Enel_Ene2024.VOGT - VOGT.json,Dem.Horas Punta PDx,"97,500kW",25.760
+29736660,Enel_Ene2024.VOGT - VOGT.json,Demanda Max. Sumi. PDx,"247,000kW",326.309
+29736660,Enel_Ene2024.VOGT - VOGT.json,Multa por consumo reactivo,,4.539
+29736660,Enel_Ene2024.VOGT - VOGT.json,Cargo Fijo Mensual PDx,,669
+29736660,Enel_Ene2024.VOGT - VOGT.json,Intereses de Mora,,5.147
+29736660,Enel_Ene2024.VOGT - VOGT.json,Total Monto Neto,,506.064
+29736660,Enel_Ene2024.VOGT - VOGT.json,Total I.V.A.,19%,96.152
+29736660,Enel_Ene2024.VOGT - VOGT.json,Monto Total,,602.216
+29736660,Enel_Ene2024.VOGT - VOGT.json,Suma Gasto Real (Calculada),,458.576
+29736660,Enel_Ene2024.VOGT - VOGT.json,Dato Real (Extraído de JSON),,602.216
+29736660,Enel_Ene2024.VOGT - VOGT.json,Diferencia Suma vs Real,,-143.640
+29938502,Enel_Feb2024_VOGT - VOGT.json,Dem.Horas Punta PDx,"97,500kW",25.760
+29938502,Enel_Feb2024_VOGT - VOGT.json,Demanda Max. Sumi. PDx,"247,000kW",326.309
+29938502,Enel_Feb2024_VOGT - VOGT.json,Cargo Fijo Mensual PDx,,669
+29938502,Enel_Feb2024_VOGT - VOGT.json,Total Monto Neto,,496.378
+29938502,Enel_Feb2024_VOGT - VOGT.json,Total I.V.A.,19%,94.312
+29938502,Enel_Feb2024_VOGT - VOGT.json,Monto Total,,590.690
+29938502,Enel_Feb2024_VOGT - VOGT.json,Suma Gasto Real (Calculada),,447.050
+29938502,Enel_Feb2024_VOGT - VOGT.json,Dato Real (Extraído de JSON),,590.690
+29938502,Enel_Feb2024_VOGT - VOGT.json,Diferencia Suma vs Real,,-143.640
+27109613,Enero 2023 - VOGT.json,Administración del servicio,,669
+27109613,Enero 2023 - VOGT.json,Electricidad Consumida,40200kWh,2.527.262
+27109613,Enero 2023 - VOGT.json,Cargo por Servicio Público,,142.308
+27109613,Enero 2023 - VOGT.json,Transporte de electricidad,,501.858
+27109613,Enero 2023 - VOGT.json,Arriendo Medidor,,29.618
+27109613,Enero 2023 - VOGT.json,Dem. Horas punta,"88,500kW",466.979
+27109613,Enero 2023 - VOGT.json,Dem Max.,"183,000kW",241.760
+27109613,Enero 2023 - VOGT.json,Intereses de Mora,,20.795
+27109613,Enero 2023 - VOGT.json,Total Monto Neto,,3.788.941
+27109613,Enero 2023 - VOGT.json,Total I.V.A.,19%,719.899
+27109613,Enero 2023 - VOGT.json,Monto Exento,,142.308
+27109613,Enero 2023 - VOGT.json,Monto Total,,4.651.148
+27109613,Enero 2023 - VOGT.json,ATU DISPOSICIÓN  q  y   N N   Y,,1
+27109613,Enero 2023 - VOGT.json,Tarifas fijadas según Decreto,,4
+27109613,Enero 2023 - VOGT.json,Ministerio de Energía.,,1
+27109613,Enero 2023 - VOGT.json,Suma Gasto Real (Calculada),,4.651.154
+27109613,Enero 2023 - VOGT.json,Dato Real (Extraído de JSON),,4.651.148
+27109613,Enero 2023 - VOGT.json,Diferencia Suma vs Real,,6
+25269313,Feb 2022 - VOGT.json,Administración del servicio,,669
+25269313,Feb 2022 - VOGT.json,Arriendo Medidor,,26.353
+25269313,Feb 2022 - VOGT.json,Dem. Horas punta,"22,500kW",114.716
+25269313,Feb 2022 - VOGT.json,Dem Max.,"57,000kW",75.302
+25269313,Feb 2022 - VOGT.json,Total Monto Neto,,644.548
+25269313,Feb 2022 - VOGT.json,Total I.V.A.,19%,122.464
+25269313,Feb 2022 - VOGT.json,Monto Exento,,3.048
+25269313,Feb 2022 - VOGT.json,Monto Total,,770.060
+25269313,Feb 2022 - VOGT.json,Suma Gasto Real (Calculada),,339.504
+25269313,Feb 2022 - VOGT.json,Dato Real (Extraído de JSON),,770.060
+25269313,Feb 2022 - VOGT.json,Diferencia Suma vs Real,,-430.556
+26047947,Jul 2022 - VOGT.json,Administración del servicio,,669
+26047947,Jul 2022 - VOGT.json,Electricidad Consumida,40800kWh,2.564.981
+26047947,Jul 2022 - VOGT.json,Cargo por Servicio Público,,20.727
+26047947,Jul 2022 - VOGT.json,Transporte de electricidad,,448.905
+26047947,Jul 2022 - VOGT.json,Arriendo Medidor,,27.713
+26047947,Jul 2022 - VOGT.json,Dem. Horas punta,"72,000kW",379.915
+26047947,Jul 2022 - VOGT.json,Dem Max.,"145,500kW",192.219
+26047947,Jul 2022 - VOGT.json,Multa por consumo reactivo,,356.200
+26047947,Jul 2022 - VOGT.json,Total Monto Neto,,3.970.602
+26047947,Jul 2022 - VOGT.json,Total I.V.A.,19%,754.414
+26047947,Jul 2022 - VOGT.json,Monto Exento,,20.727
+26047947,Jul 2022 - VOGT.json,Monto Total,,4.745.743
+26047947,Jul 2022 - VOGT.json,Suma Gasto Real (Calculada),,4.745.743
+26047947,Jul 2022 - VOGT.json,Dato Real (Extraído de JSON),,4.745.743
+26047947,Jul 2022 - VOGT.json,Diferencia Suma vs Real,,0
+28917299,Julio-Ago 2023 - VOGT.json,Electricidad Consumida,135805kWh,361.241
+28917299,Julio-Ago 2023 - VOGT.json,Dem.Horas Punta PDx,"102,000kW",37.212
+28917299,Julio-Ago 2023 - VOGT.json,Demanda Max. Sumi. PDx,"259,000kW",472.465
+28917299,Julio-Ago 2023 - VOGT.json,Cargo Fijo Mensual PDx,,669
+28917299,Julio-Ago 2023 - VOGT.json,Total Monto Neto,,871.587
+28917299,Julio-Ago 2023 - VOGT.json,Total I.V.A.,19%,165.602
+28917299,Julio-Ago 2023 - VOGT.json,Monto Total,,1.037.189
+28917299,Julio-Ago 2023 - VOGT.json,Saldo anterior,,2.281.234
+28917299,Julio-Ago 2023 - VOGT.json,Suma Gasto Real (Calculada),,3.318.423
+28917299,Julio-Ago 2023 - VOGT.json,Dato Real (Extraído de JSON),,1.037.189
+28917299,Julio-Ago 2023 - VOGT.json,Diferencia Suma vs Real,,2.281.234
+25883333,Jun 2022 - VOGT.json,Administración del servicio,,669
+25883333,Jun 2022 - VOGT.json,Electricidad Consumida,33300kWh,2.026.149
+25883333,Jun 2022 - VOGT.json,Cargo por Servicio Público,,16.917
+25883333,Jun 2022 - VOGT.json,Transporte de electricidad,,357.742
+25883333,Jun 2022 - VOGT.json,Arriendo Medidor,,27.233
+25883333,Jun 2022 - VOGT.json,Dem. Horas punta,"69,000kW",353.658
+25883333,Jun 2022 - VOGT.json,Dem Max.,"124,500kW",164.476
+25883333,Jun 2022 - VOGT.json,Multa por consumo reactivo,,271.732
+25883333,Jun 2022 - VOGT.json,Saldo Anterior,,7.264.232
+25883333,Jun 2022 - VOGT.json,Total Monto Neto,,3.201.659
+25883333,Jun 2022 - VOGT.json,Total I.V.A.,19%,608.315
+25883333,Jun 2022 - VOGT.json,Monto Exento,,16.917
+25883333,Jun 2022 - VOGT.json,Monto Total,,3.826.891
+25883333,Jun 2022 - VOGT.json,Saldo anterior,,8.639.542
+25883333,Jun 2022 - VOGT.json,Suma Gasto Real (Calculada),,19.730.665
+25883333,Jun 2022 - VOGT.json,Dato Real (Extraído de JSON),,3.826.891
+25883333,Jun 2022 - VOGT.json,Diferencia Suma vs Real,,15.903.774
+28907715,Jun-Jul 2023 - VOGT.json,Electricidad Consumida,,874.552
+28907715,Jun-Jul 2023 - VOGT.json,Cargo por Servicio Público,,5.321
+28907715,Jun-Jul 2023 - VOGT.json,Transporte de electricidad,,125.704
+28907715,Jun-Jul 2023 - VOGT.json,Cargo Fondo de Estabilización Ley,,21.472
+28907715,Jun-Jul 2023 - VOGT.json,Arriendo Medidor,,15.157
+28907715,Jun-Jul 2023 - VOGT.json,Dem. Horas punta,,410.212
+28907715,Jun-Jul 2023 - VOGT.json,Dem Max.,,241.760
+28907715,Jun-Jul 2023 - VOGT.json,Crg.Ley Estabilización Precios,,9.658
+28907715,Jun-Jul 2023 - VOGT.json,Cargo Fijo Mensual,,669
+28907715,Jun-Jul 2023 - VOGT.json,Cg.Dm.Mx.Pot.Hrs.Pta.PDx FC,,101.672
+28907715,Jun-Jul 2023 - VOGT.json,Cg.Dem.Max.Pot.Sum.PDx Fuera C,,114.338
+28907715,Jun-Jul 2023 - VOGT.json,Total Monto Neto,,1.884.064
+28907715,Jun-Jul 2023 - VOGT.json,Total I.V.A.,19%,357.972
+28907715,Jun-Jul 2023 - VOGT.json,Monto Exento,,39.198
+28907715,Jun-Jul 2023 - VOGT.json,Monto Total,,2.281.234
+28907715,Jun-Jul 2023 - VOGT.json,Suma Gasto Real (Calculada),,2.278.487
+28907715,Jun-Jul 2023 - VOGT.json,Dato Real (Extraído de JSON),,2.281.234
+28907715,Jun-Jul 2023 - VOGT.json,Diferencia Suma vs Real,,-2.747
+25835274,Mayo 2 2022 - VOGT.json,Administración del servicio,,669
+25835274,Mayo 2 2022 - VOGT.json,Electricidad Consumida,27900kWh,1.697.584
+25835274,Mayo 2 2022 - VOGT.json,Cargo por Servicio Público,,14.173
+25835274,Mayo 2 2022 - VOGT.json,Transporte de electricidad,,299.730
+25835274,Mayo 2 2022 - VOGT.json,Arriendo Medidor,,27.013
+25835274,Mayo 2 2022 - VOGT.json,Dem. Horas punta,"48,000kW",246.023
+25835274,Mayo 2 2022 - VOGT.json,Dem Max.,"111,000kW",146.641
+25835274,Mayo 2 2022 - VOGT.json,Multa por consumo reactivo,,227.976
+25835274,Mayo 2 2022 - VOGT.json,Saldo Anterior,,4.604.423
+25835274,Mayo 2 2022 - VOGT.json,Total Monto Neto,,2.645.636
+25835274,Mayo 2 2022 - VOGT.json,Total I.V.A.,19%,502.671
+25835274,Mayo 2 2022 - VOGT.json,Monto Exento,,14.173
+25835274,Mayo 2 2022 - VOGT.json,Monto Total,,3.162.480
+25835274,Mayo 2 2022 - VOGT.json,Saldo anterior,,5.477.062
+25835274,Mayo 2 2022 - VOGT.json,Suma Gasto Real (Calculada),,13.243.965
+25835274,Mayo 2 2022 - VOGT.json,Dato Real (Extraído de JSON),,3.162.480
+25835274,Mayo 2 2022 - VOGT.json,Diferencia Suma vs Real,,10.081.485
+25832880,Mayo 2022 - VOGT.json,Administración del servicio,,669
+25832880,Mayo 2022 - VOGT.json,Electricidad Consumida,22800kWh,1.387.273
+25832880,Mayo 2022 - VOGT.json,Cargo por Servicio Público,,11.583
+25832880,Mayo 2022 - VOGT.json,Transporte de electricidad,,244.940
+25832880,Mayo 2022 - VOGT.json,Arriendo Medidor,,26.759
+25832880,Mayo 2022 - VOGT.json,Dem. Horas punta,"22,500kW",116.284
+25832880,Mayo 2022 - VOGT.json,Dem Max.,"94,500kW",124.843
+25832880,Mayo 2022 - VOGT.json,Saldo Anterior,,2.692.072
+25832880,Mayo 2022 - VOGT.json,Total Monto Neto,,1.900.768
+25832880,Mayo 2022 - VOGT.json,Total I.V.A.,19%,361.146
+25832880,Mayo 2022 - VOGT.json,Monto Exento,,11.583
+25832880,Mayo 2022 - VOGT.json,Monto Total,,2.273.497
+25832880,Mayo 2022 - VOGT.json,Saldo anterior,,3.203.565
+25832880,Mayo 2022 - VOGT.json,Suma Gasto Real (Calculada),,8.169.134
+25832880,Mayo 2022 - VOGT.json,Dato Real (Extraído de JSON),,2.273.497
+25832880,Mayo 2022 - VOGT.json,Diferencia Suma vs Real,,5.895.637
+26757988,Nov 2022 - VOGT.json,Administración del servicio,,669
+26757988,Nov 2022 - VOGT.json,Electricidad Consumida,42600kWh,2.678.142
+26757988,Nov 2022 - VOGT.json,Cargo por Servicio Público,,21.641
+26757988,Nov 2022 - VOGT.json,Transporte de electricidad,,528.410
+26757988,Nov 2022 - VOGT.json,Arriendo Medidor,,29.066
+26757988,Nov 2022 - VOGT.json,Dem. Horas punta,"88,500kW",466.979
+26757988,Nov 2022 - VOGT.json,Dem Max.,"183,000kW",241.760
+26757988,Nov 2022 - VOGT.json,Total Monto Neto,,3.945.026
+26757988,Nov 2022 - VOGT.json,Total I.V.A.,19%,749.555
+26757988,Nov 2022 - VOGT.json,Monto Exento,,21.641
+26757988,Nov 2022 - VOGT.json,Monto Total,,4.716.222
+26757988,Nov 2022 - VOGT.json,Suma Gasto Real (Calculada),,4.716.222
+26757988,Nov 2022 - VOGT.json,Dato Real (Extraído de JSON),,4.716.222
+26757988,Nov 2022 - VOGT.json,Diferencia Suma vs Real,,0
+29324155,Nov 2023 - VOGT.json,Electricidad Consumida,39333kWh,104.626
+29324155,Nov 2023 - VOGT.json,Dem.Horas Punta PDx,"97,500kW",25.760
+29324155,Nov 2023 - VOGT.json,Demanda Max. Sumi. PDx,"247,000kW",326.309
+29324155,Nov 2023 - VOGT.json,Multa por consumo reactivo,,4.556
+29324155,Nov 2023 - VOGT.json,Cargo Fijo Mensual PDx,,669
+29324155,Nov 2023 - VOGT.json,Intereses de Mora,,110.813
+29324155,Nov 2023 - VOGT.json,Total Monto Neto,,572.733
+29324155,Nov 2023 - VOGT.json,Total I.V.A.,19%,108.819
+29324155,Nov 2023 - VOGT.json,Monto Total,,681.552
+29324155,Nov 2023 - VOGT.json,Suma Gasto Real (Calculada),,681.552
+29324155,Nov 2023 - VOGT.json,Dato Real (Extraído de JSON),,681.552
+29324155,Nov 2023 - VOGT.json,Diferencia Suma vs Real,,0
+26580290,Oct 2022 - VOGT.json,Administración del servicio,,668
+26580290,Oct 2022 - VOGT.json,Electricidad Consumida,38400kWh,2.414.101
+26580290,Oct 2022 - VOGT.json,Cargo por Servicio Público,,19.507
+26580290,Oct 2022 - VOGT.json,Transporte de electricidad,,476.315
+26580290,Oct 2022 - VOGT.json,Arriendo Medidor,,28.707
+26580290,Oct 2022 - VOGT.json,Dem. Horas punta,"88,500kW",77.830
+26580290,Oct 2022 - VOGT.json,Dem Max.,"183,000kW",241.760
+26580290,Oct 2022 - VOGT.json,Total Monto Neto,,3.239.381
+26580290,Oct 2022 - VOGT.json,Total I.V.A.,19%,615.482
+26580290,Oct 2022 - VOGT.json,Monto Exento,,19.507
+26580290,Oct 2022 - VOGT.json,Monto Total,,3.874.370
+26580290,Oct 2022 - VOGT.json,Suma Gasto Real (Calculada),,3.874.370
+26580290,Oct 2022 - VOGT.json,Dato Real (Extraído de JSON),,3.874.370
+26580290,Oct 2022 - VOGT.json,Diferencia Suma vs Real,,0
+29149775,Octubre 2023 - VOGT.json,Electricidad Consumida,38904kWh,103.485
+29149775,Octubre 2023 - VOGT.json,Dem.Horas Punta PDx,"97,500kW",25.760
+29149775,Octubre 2023 - VOGT.json,Demanda Max. Sumi. PDx,"247,000kW",326.309
+29149775,Octubre 2023 - VOGT.json,Multa por consumo reactivo,,4.708
+29149775,Octubre 2023 - VOGT.json,Cargo Fijo Mensual PDx,,669
+29149775,Octubre 2023 - VOGT.json,Total Monto Neto,,460.931
+29149775,Octubre 2023 - VOGT.json,Total I.V.A.,19%,87.577
+29149775,Octubre 2023 - VOGT.json,Monto Total,,548.508
+29149775,Octubre 2023 - VOGT.json,Saldo anterior,,3.969.958
+29149775,Octubre 2023 - VOGT.json,Suma Gasto Real (Calculada),,4.518.466
+29149775,Octubre 2023 - VOGT.json,Dato Real (Extraído de JSON),,548.508
+29149775,Octubre 2023 - VOGT.json,Diferencia Suma vs Real,,3.969.958
+26388503,Sep 2022 - VOGT.json,Administración del servicio,,669
+26388503,Sep 2022 - VOGT.json,Electricidad Consumida,48300kWh,3.036.486
+26388503,Sep 2022 - VOGT.json,Cargo por Servicio Público,,24.537
+26388503,Sep 2022 - VOGT.json,Transporte de electricidad,,599.113
+26388503,Sep 2022 - VOGT.json,Arriendo Medidor,,28.393
+26388503,Sep 2022 - VOGT.json,Dem. Horas punta,"99,000kW",522.383
+26388503,Sep 2022 - VOGT.json,Dem Max.,"175,500kW",231.852
+26388503,Sep 2022 - VOGT.json,Multa por consumo reactivo,,140.090
+26388503,Sep 2022 - VOGT.json,Total Monto Neto,,4.558.986
+26388503,Sep 2022 - VOGT.json,Total I.V.A.,19%,866.207
+26388503,Sep 2022 - VOGT.json,Monto Exento,,24.537
+26388503,Sep 2022 - VOGT.json,Monto Total,,5.449.730
+26388503,Sep 2022 - VOGT.json,Suma Gasto Real (Calculada),,5.449.730
+26388503,Sep 2022 - VOGT.json,Dato Real (Extraído de JSON),,5.449.730
+26388503,Sep 2022 - VOGT.json,Diferencia Suma vs Real,,0
+29118912,Sep 2023 - VOGT.json,Electricidad Consumida,45487kWh,120.995
+29118912,Sep 2023 - VOGT.json,Dem.Horas Punta PDx,"89,000kW",23.515
+29118912,Sep 2023 - VOGT.json,Demanda Max. Sumi. PDx,"247,000kW",326.309
+29118912,Sep 2023 - VOGT.json,Intereses de Mora,,76.020
+29118912,Sep 2023 - VOGT.json,Cargo Fijo Mensual PDx,,669
+29118912,Sep 2023 - VOGT.json,Total Monto Neto,,547.508
+29118912,Sep 2023 - VOGT.json,Total I.V.A.,19%,104.027
+29118912,Sep 2023 - VOGT.json,Monto Total,,651.535
+29118912,Sep 2023 - VOGT.json,Saldo anterior,,3.318.423
+29118912,Sep 2023 - VOGT.json,Suma Gasto Real (Calculada),,3.969.958
+29118912,Sep 2023 - VOGT.json,Dato Real (Extraído de JSON),,651.535
+29118912,Sep 2023 - VOGT.json,Diferencia Suma vs Real,,3.318.423
