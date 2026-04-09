@@ -79,7 +79,7 @@ const Sidebar: React.FC<SidebarProps> = memo(({
           <label className="text-[0.75rem] text-[var(--text-muted)] flex items-center gap-2">
             <Calendar size={12} /> Desde
           </label>
-          <div className="relative">
+          <div className="relative group">
             <input 
               type="month" 
               value={localFilters.start}
@@ -87,10 +87,10 @@ const Sidebar: React.FC<SidebarProps> = memo(({
               max={availableRange.end}
               onChange={(e) => handleLocalChange('start', e.target.value)}
               onClick={(e) => (e.target as any).showPicker?.()}
-              className="bg-[var(--bg-hover)] text-[var(--text-primary)] border border-[var(--border)] p-3 pr-10 rounded-[var(--radius-md)] text-sm leading-tight outline-none hover:border-[var(--border-hover)] focus:border-[var(--accent-primary)] transition-all cursor-pointer w-full appearance-none"
-              style={{ fontSize: '16px' }} // Prevents iOS zoom
+              className="bg-[var(--bg-hover)] text-[var(--text-primary)] border border-[var(--border)] p-3 pr-10 rounded-[var(--radius-md)] text-sm leading-tight outline-none hover:border-[var(--border-hover)] focus:border-[var(--accent-primary)] transition-all cursor-pointer w-full z-10 relative"
+              style={{ fontSize: '16px' }}
             />
-            <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" />
+            <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] group-hover:text-[var(--accent-primary)] transition-colors z-0" />
           </div>
         </div>
 
@@ -98,7 +98,7 @@ const Sidebar: React.FC<SidebarProps> = memo(({
           <label className="text-[0.75rem] text-[var(--text-muted)] flex items-center gap-2">
             <Calendar size={12} /> Hasta
           </label>
-          <div className="relative">
+          <div className="relative group">
             <input 
               type="month" 
               value={localFilters.end}
@@ -106,10 +106,10 @@ const Sidebar: React.FC<SidebarProps> = memo(({
               max={availableRange.end}
               onChange={(e) => handleLocalChange('end', e.target.value)}
               onClick={(e) => (e.target as any).showPicker?.()}
-              className="bg-[var(--bg-hover)] text-[var(--text-primary)] border border-[var(--border)] p-3 pr-10 rounded-[var(--radius-md)] text-sm leading-tight outline-none hover:border-[var(--border-hover)] focus:border-[var(--accent-primary)] transition-all cursor-pointer w-full appearance-none"
-              style={{ fontSize: '16px' }} // Prevents iOS zoom
+              className="bg-[var(--bg-hover)] text-[var(--text-primary)] border border-[var(--border)] p-3 pr-10 rounded-[var(--radius-md)] text-sm leading-tight outline-none hover:border-[var(--border-hover)] focus:border-[var(--accent-primary)] transition-all cursor-pointer w-full z-10 relative"
+              style={{ fontSize: '16px' }}
             />
-            <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" />
+            <Calendar size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] group-hover:text-[var(--accent-primary)] transition-colors z-0" />
           </div>
         </div>
         
