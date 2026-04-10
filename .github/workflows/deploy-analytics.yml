@@ -2,9 +2,9 @@ name: Deploy Analytics Dashboard
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["main", "master", "feat/vogt-static-dashboard"]
     paths:
-      - 'analytics-system/**'
+      - 'analytics-system/apps/vogt-dashboard/**'
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -26,29 +26,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: './analytics-system/apps/dashboard-react/package-lock.json'
-
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./analytics-system/apps/dashboard-react
-
-      - name: Build
-        run: npm run build
-        working-directory: ./analytics-system/apps/dashboard-react
-        
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Desplegamos la carpeta dist generada por Vite
-          path: './analytics-system/apps/dashboard-react/dist'
+          # Desplegamos la carpeta de la nueva app estática V3
+          path: './analytics-system/apps/vogt-dashboard'
           
       - name: Deploy to GitHub Pages
         id: deployment

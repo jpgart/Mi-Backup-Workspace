@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analítica Energética — VOGT</title>
+  <meta name="description" content="Dashboard de análisis de eficiencia energética para Industria Mecánica VOGT. Factor de Potencia, multas por reactiva y recomendaciones de optimización." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ===== TOKENS ===== */
+    :root {
+      --bg-base:       #0b0f1a;
+      --bg-surface:    #111827;
+      --bg-card:       #1a2235;
+      --bg-card-hover: #1f2940;
+      --border:        rgba(255,255,255,0.07);
+      --border-accent: rgba(96,165,250,0.3);
+
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted:     #64748b;
+
+      --green:   #22c55e;
+      --yellow:  #f59e0b;
+      --red:     #ef4444;
+      --blue:    #60a5fa;
+      --indigo:  #818cf8;
+      --slate:   #94a3b8;
+
+      --glow-blue:  0 0 40px rgba(96,165,250,0.15);
+      --glow-green: 0 0 40px rgba(34,197,94,0.15);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+
+      --font-sans: 'Space Grotesk', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 99px; }
+
+    /* ===== LAYOUT ===== */
+    .shell {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      padding: 28px 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-logo {
+      padding: 0 20px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .logo-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; display: block; }
+
+    .sidebar-nav { padding: 20px 12px; flex: 1; }
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      padding: 0 8px;
+      margin-bottom: 6px;
+      margin-top: 20px;
+    }
+    .nav-section-label:first-child { margin-top: 0; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-primary);
+    }
+    .nav-item.active {
+      background: rgba(96,165,250,0.12);
+      color: var(--blue);
+      border: 1px solid var(--border-accent);
+    }
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      overflow-y: auto;
+      padding: 32px 36px;
+      max-width: 1280px;
+    }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header .breadcrumb {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+    .page-header .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .header-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .meta-chip .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    /* ===== SECTION ===== */
+    .section { margin-bottom: 40px; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ===== KPI CARDS ===== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .kpi-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+      box-shadow: var(--glow-blue);
+    }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent-color, linear-gradient(90deg, #3b82f6, #6366f1));
+    }
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .kpi-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+    .trend-bad { background: rgba(239,68,68,0.15); color: var(--red); }
+    .trend-good { background: rgba(34,197,94,0.15); color: var(--green); }
+    .trend-warn { background: rgba(245,158,11,0.15); color: var(--yellow); }
+
+    /* ===== CHARTS ===== */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: all 0.3s;
+    }
+    .chart-card:hover {
+      border-color: var(--border-accent);
+      box-shadow: var(--glow-blue);
+    }
+    .chart-card.wide { grid-column: 1 / -1; }
+    .chart-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .chart-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .chart-wrapper { position: relative; height: 260px; }
+    .chart-wrapper.tall { height: 320px; }
+
+    /* ===== FP GAUGE ===== */
+    .fp-gauge-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .fp-value-display {
+      text-align: center;
+    }
+    .fp-big {
+      font-size: 52px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: -3px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .fp-label-big { font-size: 13px; color: var(--text-muted); }
+
+    /* ===== TABLE ===== */
+    .table-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .table-header-bar {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .table-title { font-size: 14px; font-weight: 600; }
+    .table-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 3px 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+    }
+    .table-scroll { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead th {
+      background: rgba(255,255,255,0.03);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+    tbody td {
+      padding: 11px 16px;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+    tbody td.mono { font-family: var(--font-mono); font-size: 12px; }
+    tbody td.dim { color: var(--text-secondary); }
+
+    /* ===== BADGES ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+    .badge-green  { background: rgba(34,197,94,0.12);  color: var(--green);  border: 1px solid rgba(34,197,94,0.2);  }
+    .badge-green::before  { background: var(--green);  }
+    .badge-yellow { background: rgba(245,158,11,0.12); color: var(--yellow); border: 1px solid rgba(245,158,11,0.2); }
+    .badge-yellow::before { background: var(--yellow); }
+    .badge-red    { background: rgba(239,68,68,0.12);  color: var(--red);    border: 1px solid rgba(239,68,68,0.2);  }
+    .badge-red::before    { background: var(--red);    }
+    .badge-slate  { background: rgba(148,163,184,0.1); color: var(--slate);  border: 1px solid rgba(148,163,184,0.2);}
+    .badge-slate::before  { background: var(--slate);  }
+
+    /* ===== INSIGHTS / CONCLUSIONS ===== */
+    .conclusions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .conclusion-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .conclusion-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .conclusion-card:hover::after { opacity: 1; }
+    .conclusion-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--card-accent-color, var(--border-accent));
+    }
+    .conclusion-card.critico      { --card-accent-color: rgba(239,68,68,0.4); }
+    .conclusion-card.financiero   { --card-accent-color: rgba(245,158,11,0.4); }
+    .conclusion-card.oportunidad  { --card-accent-color: rgba(34,197,94,0.4); }
+    .conclusion-card.proyeccion   { --card-accent-color: rgba(129,140,248,0.4); }
+    .conclusion-card.recomendacion{ --card-accent-color: rgba(96,165,250,0.4); }
+
+    .conclusion-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .conclusion-icon {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .conclusion-type {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+    }
+    .conclusion-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .conclusion-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .type-critico     .conclusion-type { color: var(--red); }
+    .type-financiero  .conclusion-type { color: var(--yellow); }
+    .type-oportunidad .conclusion-type { color: var(--green); }
+    .type-proyeccion  .conclusion-type { color: var(--indigo); }
+    .type-recomendacion .conclusion-type { color: var(--blue); }
+
+    /* ===== ROI PANEL ===== */
+    .roi-panel {
+      background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(96,165,250,0.05) 100%);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+    }
+    .roi-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+    .roi-text { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+    .roi-numbers {
+      display: flex;
+      gap: 24px;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .roi-stat { text-align: right; }
+    .roi-stat .val { font-size: 28px; font-weight: 700; font-family: var(--font-mono); letter-spacing: -1px; color: var(--green); }
+    .roi-stat .lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ===== FP TIMELINE ===== */
+    .fp-bar-container { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 0 4px; }
+    .fp-bar-wrap { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; }
+    .fp-bar-val { font-size: 9px; font-family: var(--font-mono); margin-bottom: 2px; }
+    .fp-bar { border-radius: 4px 4px 0 0; width: 100%; transition: height 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+    .fp-bar-label { font-size: 8px; margin-top: 4px; color: var(--text-muted); writing-mode: vertical-rl; transform: rotate(180deg); }
+    .fp-norm-line {
+      position: absolute;
+      border-top: 1.5px dashed rgba(96,165,250,0.5);
+      left: 0; right: 0;
+      pointer-events: none;
+    }
+
+    /* ===== TABS ===== */
+    .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+    .tab-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+    .tab-btn.active {
+      background: rgba(96,165,250,0.12);
+      border-color: var(--border-accent);
+      color: var(--blue);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== ALERT BANNER ===== */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    .alert-banner .alert-icon { font-size: 20px; flex-shrink: 0; }
+    .alert-banner strong { color: var(--red); }
+
+    /* ===== PAGE VIEWS ===== */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ===== MEDIDOR TABLE DETAIL ===== */
+    .progress-bar-cell { display: flex; align-items: center; gap: 8px; }
+    .mini-bar { height: 6px; border-radius: 99px; background: var(--bg-base); width: 80px; flex-shrink: 0; overflow: hidden; }
+    .mini-bar-fill { height: 100%; border-radius: 99px; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px; }
+      .sidebar-logo { border-bottom: none; border-right: 1px solid var(--border); padding: 0 16px 0 0; margin-right: 12px; }
+      .sidebar-nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; }
+      .sidebar-footer { display: none; }
+      .nav-section-label { display: none; }
+      .main { padding: 20px; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .roi-panel { grid-template-columns: 1fr; }
+      .roi-numbers { flex-direction: row; align-items: flex-start; }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-up { animation: fadeUp 0.4s ease forwards; }
+    .animate-up:nth-child(1) { animation-delay: 0.05s; }
+    .animate-up:nth-child(2) { animation-delay: 0.10s; }
+    .animate-up:nth-child(3) { animation-delay: 0.15s; }
+    .animate-up:nth-child(4) { animation-delay: 0.20s; }
+    .animate-up:nth-child(5) { animation-delay: 0.25s; }
+    .animate-up:nth-child(6) { animation-delay: 0.30s; }
+
+    @keyframes countUp { from { opacity: 0; } to { opacity: 1; } }
+    .count-anim { animation: countUp 1s ease forwards; }
+
+    /* ===== PULSE DOT ===== */
+    .pulse-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      position: relative;
+      display: inline-block;
+    }
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: rgba(239,68,68,0.3);
+      animation: pulse 1.8s ease-out infinite;
+    }
+    @keyframes pulse {
+      0%   { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <div>EnergyIQ</div>
+          <span class="logo-sub">Analytics Platform</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Resumen</div>
+      <button class="nav-item active" onclick="showPage('resumen', this)">
+        <span class="nav-icon">🏠</span> Dashboard
+      </button>
+
+      <div class="nav-section-label">Análisis</div>
+      <button class="nav-item" onclick="showPage('facturas', this)">
+        <span class="nav-icon">📄</span> Facturas
+      </button>
+      <button class="nav-item" onclick="showPage('reactiva', this)">
+        <span class="nav-icon">📊</span> Factor de Potencia
+      </button>
+      <button class="nav-item" onclick="showPage('consumo', this)">
+        <span class="nav-icon">⚙️</span> Consumo Energético
+      </button>
+
+      <div class="nav-section-label">Reportes</div>
+      <button class="nav-item" onclick="showPage('conclusiones', this)">
+        <span class="nav-icon">💡</span> Conclusiones
+      </button>
+      <button class="nav-item" onclick="showPage('roi', this)">
+        <span class="nav-icon">💰</span> ROI & Proyección
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div id="cliente-name" style="font-weight:600;color:var(--text-secondary);margin-bottom:4px;"></div>
+      <div id="cliente-rut"></div>
+      <div id="cliente-periodo" style="margin-top:4px;"></div>
+      <div style="margin-top:8px;color:#475569;">Informe: <span id="cliente-fecha"></span></div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- ======= PAGE: DASHBOARD ======= -->
+    <div id="page-resumen" class="page active">
+
+      <div class="page-header animate-up">
+        <div class="breadcrumb">
+          <span>EnergyIQ</span> <span>›</span>
+          <span id="hdr-cliente"></span>
+        </div>
+        <h1>Analítica Energética</h1>
+        <p class="subtitle" id="hdr-subtitle"></p>
+        <div class="header-meta">
+          <div class="meta-chip"><span class="dot"></span> <span id="hdr-periodos"></span> períodos analizados</div>
+          <div class="meta-chip">📅 <span id="hdr-rango"></span></div>
+          <div class="meta-chip">⚡ <span id="hdr-distribuidor"></span></div>
+        </div>
+      </div>
+
+      <!-- Alert if months out of norm > 0 -->
+      <div id="alert-banner" class="alert-banner animate-up">
+        <span class="alert-icon"><span class="pulse-dot"></span></span>
+        <div><strong>Alerta: <span id="alert-meses"></span> meses fuera de la norma normativa</strong> — FP promedio de <span id="alert-fp"></span>, por debajo del umbral legal de 0.93. Acción correctiva urgente recomendada.</div>
+      </div>
+
+      <!-- KPI GRID -->
+      <div class="section">
+        <div class="section-title">📌 KPIs del Período</div>
+        <div class="kpi-grid" id="kpi-grid"></div>
+      </div>
+
+      <!-- CHARTS ROW 1 -->
+      <div class="section">
+        <div class="section-title">📈 Visualizaciones Clave</div>
+        <div class="charts-grid">
+
+          <!-- Consumo activo vs reactivo -->
+          <div class="chart-card wide">
+            <div class="chart-title">Energía Activa vs. Reactiva por Período</div>
+            <div class="chart-desc">kWh facturado y kVARh medido — los puntos de mayor reactiva coinciden con las multas más altas.</div>
+            <div class="chart-wrapper tall"><canvas id="chartConsumo"></canvas></div>
+          </div>
+
+          <!-- FP por período -->
+          <div class="chart-card">
+            <div class="chart-title">Factor de Potencia por Período</div>
+            <div class="chart-desc">Línea roja: umbral normativo 0.93. Por debajo implica multa.</div>
+            <div class="chart-wrapper"><canvas id="chartFP"></canvas></div>
+          </div>
+
+          <!-- Distribución FP -->
+          <div class="chart-card">
+            <div class="chart-title">Distribución de Clasificación FP</div>
+            <div class="chart-desc">Meses clasificados por eficiencia del factor de potencia.</div>
+            <div class="chart-wrapper" style="height:220px;"><canvas id="chartDonut"></canvas></div>
+          </div>
+
+          <!-- Gasto mensual -->
+          <div class="chart-card wide">
+            <div class="chart-title">Gasto Total por Factura (Monto Total $)</div>
+            <div class="chart-desc">Evolución del costo de energía. Las barras naranjas incluyen cargo por multa reactiva.</div>
+            <div class="chart-wrapper"><canvas id="chartGasto"></canvas></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /page-resumen -->
+
+    <!-- ======= PAGE: FACTURAS ======= -->
+    <div id="page-facturas" class="page">
+      <div class="page-header">
+        <h1>Detalle de Facturas</h1>
+        <p class="subtitle">Registro completo de <span id="facturas-count"></span> facturas del período analizado.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('tab-facturas', 'tabpanel-completo', this)">Todas las Facturas</button>
+        <button class="tab-btn" onclick="showTab('tab-facturas', 'tabpanel-multas', this)">Con Multa Reactiva</button>
+      </div>
+
+      <div id="tabpanel-completo" class="tab-panel active">
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title">Facturas Emitidas</div>
+            <div class="table-count" id="facturas-count-2"></div>
+          </div>
+          <div class="table-scroll">
+            <table id="tabla-facturas"></table>
+          </div>
+        </div>
+      </div>
+
+      <div id="tabpanel-multas" class="tab-panel">
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title">Facturas con Multa por Reactiva</div>
+            <div class="table-count" id="multas-count"></div>
+          </div>
+          <div class="table-scroll">
+            <table id="tabla-multas"></table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /page-facturas -->
+
+    <!-- ======= PAGE: FACTOR DE POTENCIA ======= -->
+    <div id="page-reactiva" class="page">
+      <div class="page-header">
+        <h1>Factor de Potencia</h1>
+        <p class="subtitle">Análisis detallado del FP por mes y su impacto en la facturación.</p>
+      </div>
+
+      <div class="section">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-title">FP Calculado vs. Norma (0.93)</div>
+            <div class="chart-desc">Períodos bajo la línea punteada generan multa automática por Enel.</div>
+            <div class="chart-wrapper tall"><canvas id="chartFPDetail"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Índice de Energía Reactiva (%)</div>
+            <div class="chart-desc">Reactiva como porcentaje de la energía activa. Meta: &lt; 40%.</div>
+            <div class="chart-wrapper tall"><canvas id="chartReactivaIdx"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">🔬 Tabla Detallada — Cálculo Reactiva</div>
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title">Análisis de Factor de Potencia por Período</div>
+          </div>
+          <div class="table-scroll">
+            <table id="tabla-reactiva"></table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /page-reactiva -->
+
+    <!-- ======= PAGE: CONSUMO ======= -->
+    <div id="page-consumo" class="page">
+      <div class="page-header">
+        <h1>Consumo Energético</h1>
+        <p class="subtitle">Evolución del consumo activo y reactivo medido en contadores.</p>
+      </div>
+
+      <div class="section">
+        <div class="charts-grid">
+          <div class="chart-card wide">
+            <div class="chart-title">Energía Activa y Reactiva — Serie Temporal</div>
+            <div class="chart-desc">Datos de medidores verificados. Agosto 2023 muestra consumo anómalo acumulado (período doble).</div>
+            <div class="chart-wrapper tall"><canvas id="chartConsumoDetail"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Tarifa Unitaria $/kWh</div>
+            <div class="chart-desc">Comparación histórica de tarifa efectiva entre períodos con lectura.</div>
+            <div class="chart-wrapper"><canvas id="chartTarifa"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Mix Activa vs Reactiva (%)</div>
+            <div class="chart-desc">Proporción de reactiva sobre el total por período.</div>
+            <div class="chart-wrapper"><canvas id="chartMix"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">📋 Lecturas de Medidores</div>
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title">Registro de Medidores (kWh y kVARh)</div>
+          </div>
+          <div class="table-scroll">
+            <table id="tabla-medidores"></table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /page-consumo -->
+
+    <!-- ======= PAGE: CONCLUSIONES ======= -->
+    <div id="page-conclusiones" class="page">
+      <div class="page-header">
+        <h1>Conclusiones e Insights</h1>
+        <p class="subtitle">Hallazgos clave derivados del análisis de <span id="conc-periodos"></span> períodos facturados verificados.</p>
+      </div>
+
+      <div class="section">
+        <div class="conclusions-grid" id="conclusions-grid"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">📊 Resumen Ejecutivo</div>
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title">Puntos Clave del Informe</div>
+          </div>
+          <div class="table-scroll">
+            <table id="tabla-resumen-ejecutivo"></table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /page-conclusiones -->
+
+    <!-- ======= PAGE: ROI ======= -->
+    <div id="page-roi" class="page">
+      <div class="page-header">
+        <h1>ROI & Proyección Financiera</h1>
+        <p class="subtitle">Análisis de retorno de inversión para compensación de energía reactiva.</p>
+      </div>
+
+      <div class="section">
+        <div id="roi-panel-container"></div>
+      </div>
+
+      <div class="section">
+        <div class="charts-grid">
+          <div class="chart-card wide">
+            <div class="chart-title">Multas Acumuladas vs. Potencial Ahorro</div>
+            <div class="chart-desc">Comparativa de gasto real vs. gasto proyectado sin multas por reactiva. Área sombreada = pérdida evitable.</div>
+            <div class="chart-wrapper tall"><canvas id="chartROI"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Proyección 12 Meses — Con vs. Sin Compensación</div>
+            <div class="chart-desc">Escenario proyectado basado en consumo histórico promedio.</div>
+            <div class="chart-wrapper"><canvas id="chartProyeccion"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Distribución del Gasto Neto por Categoría</div>
+            <div class="chart-desc">Desglose del costo facturado: electricidad, transporte, cargos y multas.</div>
+            <div class="chart-wrapper"><canvas id="chartGastoDesglose"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">📋 Tabla — Real vs. Proyectado sin Multa</div>
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title">Facturación Real vs. Optimizada</div>
+          </div>
+          <div class="table-scroll">
+            <table id="tabla-roi"></table>
+          </div>
+        </div>
+      </div>
+    </div><!-- /page-roi -->
+
+  </main>
+</div>
+
+<!-- DATA SOURCE -->
+<script src="data/vogt.js"></script>
+
+<script>
+// ============================================================
+// CORE APPLICATION
+// ============================================================
+const D = window.DASHBOARD_DATA;
+const fmt   = n => n == null ? '—' : '$' + Math.round(n).toLocaleString('es-CL');
+const fmtN  = n => n == null ? '—' : n.toLocaleString('es-CL');
+const fmtFP = n => (n || 0).toFixed(3);
+
+// ---- Chart defaults ----
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+
+const CHART_OPTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { boxWidth: 12, padding: 16, font: { size: 12 } } },
+    tooltip: {
+      backgroundColor: '#1a2235',
+      borderColor: 'rgba(255,255,255,0.1)',
+      borderWidth: 1,
+      padding: 12,
+      titleFont: { size: 13, weight: '600' },
+      bodyFont: { size: 12 },
+    }
+  },
+  scales: {
+    x: {
+      grid: { color: 'rgba(255,255,255,0.04)' },
+      ticks: { maxRotation: 45, minRotation: 30 }
+    },
+    y: { grid: { color: 'rgba(255,255,255,0.04)' } }
+  }
+};
+
+function mergeDeep(a, b) {
+  return JSON.parse(JSON.stringify({ ...a, ...b }));
+}
+
+// ----  FP badge ----
+function fpBadge(fp, clas) {
+  if (!fp || fp === 0) return `<span class='badge badge-slate'>Sin Lectura</span>`;
+  if (clas === 'Crítico')     return `<span class='badge badge-red'>Crítico ${fmtFP(fp)}</span>`;
+  if (clas === 'Ineficiente') return `<span class='badge badge-yellow'>Ineficiente ${fmtFP(fp)}</span>`;
+  if (clas === 'Eficiente')   return `<span class='badge badge-green'>Eficiente ${fmtFP(fp)}</span>`;
+  return `<span class='badge badge-slate'>${fmtFP(fp)}</span>`;
+}
+
+function fpColor(fp) {
+  if (!fp || fp >= 0.93) return '#22c55e';
+  if (fp >= 0.85)        return '#f59e0b';
+  return '#ef4444';
+}
+
+// ============================================================
+// SIDEBAR METADATA
+// ============================================================
+function initClientMeta() {
+  const c = D.cliente;
+  document.getElementById('cliente-name').textContent    = c.nombre;
+  document.getElementById('cliente-rut').textContent     = c.rut;
+  document.getElementById('cliente-periodo').textContent = c.periodoAnalizado;
+  document.getElementById('cliente-fecha').textContent   = c.fechaInforme;
+  document.getElementById('hdr-cliente').textContent     = c.nombre;
+  document.getElementById('hdr-subtitle').textContent    = `RUT ${c.rut} · ${c.periodoAnalizado}`;
+  document.getElementById('hdr-periodos').textContent    = c.totalPeriodos;
+  document.getElementById('hdr-rango').textContent       = c.periodoAnalizado;
+  document.getElementById('hdr-distribuidor').textContent = c.distribuidora;
+  document.getElementById('facturas-count').textContent  = D.facturas.length;
+  document.getElementById('facturas-count-2').textContent = D.facturas.length + ' registros';
+  document.getElementById('conc-periodos').textContent   = c.totalPeriodos;
+
+  // Alert
+  const k = D.kpis;
+  document.getElementById('alert-meses').textContent = k.mesesFueraNorma;
+  document.getElementById('alert-fp').textContent    = k.fpPromedio.toFixed(3);
+}
+
+// ============================================================
+// KPI GRID
+// ============================================================
+function initKPIs() {
+  const k = D.kpis;
+  const kpis = [
+    {
+      label: 'Gasto Neto Total', value: fmt(k.gastoNetoTotal),
+      sub: 'Período analizado', trend: null,
+      accent: 'linear-gradient(90deg,#3b82f6,#6366f1)'
+    },
+    {
+      label: 'Energía Consumida', value: (k.energiaTotal_kWh/1000).toFixed(1)+' MWh',
+      sub: 'Total kWh facturado', trend: null,
+      accent: 'linear-gradient(90deg,#6366f1,#8b5cf6)'
+    },
+    {
+      label: 'Multas Reactiva', value: fmt(k.multasTotal),
+      sub: `${k.porcentajeMultas}% del gasto neto`,
+      trend: { label: `+${k.porcentajeMultas}% extra`, cls: 'trend-bad' },
+      accent: 'linear-gradient(90deg,#ef4444,#f97316)'
+    },
+    {
+      label: 'Meses Fuera Norma', value: k.mesesFueraNorma + ' meses',
+      sub: `de ${D.cliente.totalPeriodos} períodos`,
+      trend: { label: 'FP < 0.93', cls: 'trend-bad' },
+      accent: 'linear-gradient(90deg,#f59e0b,#ef4444)'
+    },
+    {
+      label: 'FP Promedio', value: k.fpPromedio,
+      sub: 'Norma mínima: 0.930',
+      trend: { label: '−' + (0.93 - k.fpPromedio).toFixed(3) + ' bajo norma', cls: 'trend-bad' },
+      accent: 'linear-gradient(90deg,#f59e0b,#fb923c)'
+    },
+    {
+      label: 'Ahorro Potencial', value: fmt(k.multasTotal),
+      sub: 'Si hubiera habido compensación',
+      trend: { label: 'Recuperable', cls: 'trend-good' },
+      accent: 'linear-gradient(90deg,#22c55e,#10b981)'
+    },
+    {
+      label: 'Pérdida Proyectada 12m', value: fmt(k.costoInaccion12m),
+      sub: 'Sin compensación reactiva',
+      trend: { label: 'Evitable', cls: 'trend-warn' },
+      accent: 'linear-gradient(90deg,#f97316,#f59e0b)'
+    },
+    {
+      label: 'Payback Condensadores', value: k.paybackMeses + ' meses',
+      sub: `${k.capacitorRecomendado_kVAr} kVAr recomendados`,
+      trend: { label: 'Alta rentabilidad', cls: 'trend-good' },
+      accent: 'linear-gradient(90deg,#22c55e,#3b82f6)'
+    },
+  ];
+
+  const grid = document.getElementById('kpi-grid');
+  kpis.forEach(k => {
+    const card = document.createElement('div');
+    card.className = 'kpi-card animate-up';
+    card.style.setProperty('--accent-color', k.accent);
+    card.innerHTML = `
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+      ${k.trend ? `<div class="kpi-trend ${k.trend.cls}">${k.trend.label}</div>` : ''}
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ============================================================
+// CHARTS — DASHBOARD
+// ============================================================
+function initDashboardCharts() {
+  const s = D.serieConsumo;
+  const labels = s.map(r => r.mes);
+
+  // 1. Consumo activo vs reactivo
+  new Chart(document.getElementById('chartConsumo'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Activa (kWh)',
+          data: s.map(r => r.activa),
+          backgroundColor: 'rgba(96,165,250,0.7)',
+          borderColor: '#60a5fa',
+          borderWidth: 1,
+          borderRadius: 4,
+          order: 2
+        },
+        {
+          label: 'Reactiva (kVARh)',
+          data: s.map(r => r.reactiva),
+          backgroundColor: 'rgba(239,68,68,0.55)',
+          borderColor: '#ef4444',
+          borderWidth: 1,
+          borderRadius: 4,
+          order: 1
+        }
+      ]
+    },
+    options: {
+      ...CHART_OPTS,
+      plugins: {
+        ...CHART_OPTS.plugins,
+        tooltip: {
+          ...CHART_OPTS.plugins.tooltip,
+          callbacks: {
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()} kW` + (ctx.datasetIndex === 0 ? 'h' : 'ARh')
+          }
+        }
+      }
+    }
+  });
+
+  // 2. FP por período
+  const factWithFP = D.facturas.filter(f => f.fp < 1 && f.consumo_kWh > 0);
+  new Chart(document.getElementById('chartFP'), {
+    type: 'line',
+    data: {
+      labels: factWithFP.map(f => f.mes),
+      datasets: [
+        {
+          label: 'FP Calculado',
+          data: factWithFP.map(f => f.fp),
+          borderColor: '#60a5fa',
+          backgroundColor: ctx => {
+            const v = ctx.raw;
+            return v < 0.85 ? 'rgba(239,68,68,0.2)' : v < 0.93 ? 'rgba(245,158,11,0.2)' : 'rgba(34,197,94,0.2)';
+          },
+          pointBackgroundColor: factWithFP.map(f => fpColor(f.fp)),
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          fill: false,
+          tension: 0.35,
+          borderWidth: 2.5
+        },
+        {
+          label: 'Norma (0.93)',
+          data: factWithFP.map(() => 0.93),
+          borderColor: 'rgba(239,68,68,0.7)',
+          borderDash: [6,4],
+          pointRadius: 0,
+          borderWidth: 1.5,
+          fill: false,
+        }
+      ]
+    },
+    options: {
+      ...CHART_OPTS,
+      scales: {
+        ...CHART_OPTS.scales,
+        y: { ...CHART_OPTS.scales.y, min: 0.70, max: 1.05 }
+      }
+    }
+  });
+
+  // 3. Donut clasificación
+  new Chart(document.getElementById('chartDonut'), {
+    type: 'doughnut',
+    data: {
+      labels: D.clasificacionFP.map(c => c.label),
+      datasets: [{
+        data: D.clasificacionFP.map(c => c.count),
+        backgroundColor: D.clasificacionFP.map(c => c.color + 'cc'),
+        borderColor: D.clasificacionFP.map(c => c.color),
+        borderWidth: 1.5,
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: { position: 'right', labels: { padding: 12, boxWidth: 12 } },
+        tooltip: CHART_OPTS.plugins.tooltip
+      }
+    }
+  });
+
+  // 4. Gasto mensual
+  const gasto = D.facturas;
+  new Chart(document.getElementById('chartGasto'), {
+    type: 'bar',
+    data: {
+      labels: gasto.map(f => f.mes),
+      datasets: [{
+        label: 'Monto Total ($CLP)',
+        data: gasto.map(f => f.total),
+        backgroundColor: gasto.map(f => f.multa > 0 ? 'rgba(245,158,11,0.75)' : 'rgba(96,165,250,0.55)'),
+        borderColor: gasto.map(f => f.multa > 0 ? '#f59e0b' : '#60a5fa'),
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      ...CHART_OPTS,
+      plugins: {
+        ...CHART_OPTS.plugins,
+        tooltip: {
+          ...CHART_OPTS.plugins.tooltip,
+          callbacks: {
+            label: ctx => ` Total: ${fmt(ctx.raw)}`,
+            afterLabel: ctx => {
+              const f = gasto[ctx.dataIndex];
+              return f.multa > 0 ? ` ⚠️ Multa reactiva: ${fmt(f.multa)}` : '';
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// ============================================================
+// TABLES
+// ============================================================
+function buildTable(el, headers, rows) {
+  el.innerHTML = `
+    <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+  `;
+}
+
+function initFacturasTable() {
+  const el = document.getElementById('tabla-facturas');
+  buildTable(el,
+    ['N° Factura','Período','Consumo (kWh)','Reactiva (kVARh)','Factor de Potencia','Monto Total','Multa Reactiva'],
+    D.facturas.map(f => [
+      `<span class="mono dim">${f.factura}</span>`,
+      f.mes,
+      fmtN(f.consumo_kWh) || '—',
+      fmtN(f.reactiva_kVARh) || '—',
+      fpBadge(f.fp, f.clasificacion),
+      `<span class="mono">${fmt(f.total)}</span>`,
+      f.multa > 0 ? `<span style="color:var(--red);font-weight:600">${fmt(f.multa)}</span>` : `<span class="dim">—</span>`
+    ])
+  );
+
+  const multasEl = document.getElementById('tabla-multas');
+  const conMulta = D.facturas.filter(f => f.multa > 0);
+  document.getElementById('multas-count').textContent = conMulta.length + ' registros';
+  buildTable(multasEl,
+    ['N° Factura','Período','FP','Clasificación','% Multa','Multa ($)','Costo Base'],
+    conMulta.map(f => {
+      const pct = f.clasificacion === 'Crítico' ? `>10%` : f.clasificacion === 'Ineficiente' ? '1–10%' : '—';
+      return [
+        `<span class="mono dim">${f.factura}</span>`,
+        f.mes,
+        `<span class="mono" style="color:${fpColor(f.fp)}">${fmtFP(f.fp)}</span>`,
+        fpBadge(f.fp, f.clasificacion),
+        pct,
+        `<span class="mono" style="color:var(--red);font-weight:600">${fmt(f.multa)}</span>`,
+        `<span class="mono dim">${fmt(f.neto)}</span>`
+      ];
+    })
+  );
+}
+
+function initReactivaPage() {
+  // FP detail chart
+  const data = D.facturas.filter(f => f.consumo_kWh > 0 && f.fp > 0);
+  new Chart(document.getElementById('chartFPDetail'), {
+    type: 'line',
+    data: {
+      labels: data.map(f => f.mes),
+      datasets: [
+        {
+          label: 'FP Calculado',
+          data: data.map(f => f.fp),
+          borderColor: '#60a5fa',
+          pointBackgroundColor: data.map(f => fpColor(f.fp)),
+          pointRadius: 6,
+          fill: {
+            target: { value: 0.93 },
+            above: 'rgba(34,197,94,0.08)',
+            below: 'rgba(239,68,68,0.15)'
+          },
+          tension: 0.3,
+          borderWidth: 2.5
+        },
+        {
+          label: 'Norma 0.93',
+          data: data.map(() => 0.93),
+          borderColor: 'rgba(239,68,68,0.7)',
+          borderDash: [5,4],
+          pointRadius: 0,
+          borderWidth: 1.5,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      ...CHART_OPTS,
+      scales: {
+        ...CHART_OPTS.scales,
+        y: { ...CHART_OPTS.scales.y, min: 0.70, max: 1.05 }
+      }
+    }
+  });
+
+  // Reactiva index chart
+  new Chart(document.getElementById('chartReactivaIdx'), {
+    type: 'bar',
+    data: {
+      labels: data.map(f => f.mes),
+      datasets: [{
+        label: '% Reactiva/Activa',
+        data: data.map(f => f.consumo_kWh > 0 ? Math.round(f.reactiva_kVARh / f.consumo_kWh * 100) : 0),
+        backgroundColor: data.map(f => {
+          const pct = f.reactiva_kVARh / f.consumo_kWh * 100;
+          return pct > 40 ? 'rgba(239,68,68,0.7)' : pct > 20 ? 'rgba(245,158,11,0.7)' : 'rgba(34,197,94,0.7)';
+        }),
+        borderRadius: 4,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      ...CHART_OPTS,
+      plugins: {
+        ...CHART_OPTS.plugins,
+        tooltip: {
+          ...CHART_OPTS.plugins.tooltip,
+          callbacks: { label: ctx => ` ${ctx.raw}% energía reactiva` }
+        }
+      }
+    }
+  });
+
+  // Table
+  buildTable(
+    document.getElementById('tabla-reactiva'),
+    ['N° Factura','Período','Activa (kWh)','Reactiva (kVARh)','FP','Clasificación','% Multa','Multa Est. ($)','¿Multa?'],
+    D.facturas.map(f => [
+      `<span class="mono dim">${f.factura}</span>`,
+      f.mes,
+      `<span class="mono">${fmtN(f.consumo_kWh)}</span>`,
+      `<span class="mono">${fmtN(f.reactiva_kVARh)}</span>`,
+      `<span class="mono" style="color:${fpColor(f.fp)}">${fmtFP(f.fp)}</span>`,
+      fpBadge(f.fp, f.clasificacion),
+      f.multa > 0 ? `${((f.multa/f.neto)*100).toFixed(1)}%` : '—',
+      f.multa > 0 ? `<span style="color:var(--red)">${fmt(f.multa)}</span>` : '—',
+      f.multa > 0 ? `<span class="badge badge-red">SI</span>` : `<span class="badge badge-green">NO</span>`
+    ])
+  );
+}
+
+function initConsumoPage() {
+  const s = D.serieConsumo;
+  const labels = s.map(r => r.mes);
+
+  // Detail chart
+  new Chart(document.getElementById('chartConsumoDetail'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Energía Activa (kWh)',
+          data: s.map(r => r.activa),
+          backgroundColor: 'rgba(96,165,250,0.65)',
+          borderColor: '#60a5fa',
+          borderWidth: 1,
+          borderRadius: 4,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Energía Reactiva (kVARh)',
+          data: s.map(r => r.reactiva),
+          backgroundColor: 'rgba(239,68,68,0.5)',
+          borderColor: '#ef4444',
+          borderWidth: 1,
+          borderRadius: 4,
+          yAxisID: 'y'
+        }
+      ]
+    },
+    options: { ...CHART_OPTS }
+  });
+
+  // Tarifa
+  const conTarifa = D.facturas.filter(f => f.tarifa_kWh && f.tarifa_kWh > 0 && f.tarifa_kWh < 200);
+  new Chart(document.getElementById('chartTarifa'), {
+    type: 'line',
+    data: {
+      labels: conTarifa.map(f => f.mes),
+      datasets: [{
+        label: '$/kWh',
+        data: conTarifa.map(f => f.tarifa_kWh),
+        borderColor: '#818cf8',
+        backgroundColor: 'rgba(129,140,248,0.08)',
+        pointBackgroundColor: '#818cf8',
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 4
+      }]
+    },
+    options: {
+      ...CHART_OPTS,
+      plugins: {
+        ...CHART_OPTS.plugins,
+        tooltip: {
+          ...CHART_OPTS.plugins.tooltip,
+          callbacks: { label: ctx => ` $${ctx.raw.toFixed(2)}/kWh` }
+        }
+      }
+    }
+  });
+
+  // Mix chart
+  new Chart(document.getElementById('chartMix'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Activa %',
+          data: s.map(r => r.activa > 0 ? Math.round((r.activa/(r.activa+r.reactiva))*100) : 100),
+          backgroundColor: 'rgba(96,165,250,0.7)',
+          stack: 'mix'
+        },
+        {
+          label: 'Reactiva %',
+          data: s.map(r => r.activa > 0 ? Math.round((r.reactiva/(r.activa+r.reactiva))*100) : 0),
+          backgroundColor: 'rgba(239,68,68,0.6)',
+          stack: 'mix'
+        }
+      ]
+    },
+    options: {
+      ...CHART_OPTS,
+      scales: {
+        x: { ...CHART_OPTS.scales.x, stacked: true },
+        y: { ...CHART_OPTS.scales.y, stacked: true, max: 100 }
+      }
+    }
+  });
+
+  // Medidores table
+  buildTable(
+    document.getElementById('tabla-medidores'),
+    ['N° Factura','Período','N° Medidor','Constante','Lectura Ant.','Lectura Act.','Consumo (kWh)','Tipo'],
+    [
+      ['26218922','Ago 2022','82475','300','81127','81279','45,600','Activa'],
+      ['26218922','Ago 2022','82475R','300','27117','27193','22,800','Reactiva'],
+      ['28917299','Ago 2023','11268624','1000','0','135.805','135,805','Activa'],
+      ['28917299','Ago 2023','11268624R','1000','0','54.380','54,380','Reactiva'],
+      ['31061687','Ago 2024','11268624','1000','593.580','624.569','30,989','Activa'],
+      ['31061687','Ago 2024','11268624R','1000','217.671','217.671','0','Reactiva'],
+      ['26923948','Dic 2022','82475','300','81710','81842','39,600','Activa'],
+      ['26923948','Dic 2022','82475R','300','27347','27395','14,400','Reactiva'],
+      ['29530021','Dic 2023','11268624','1000','259.529','297.812','38,283','Activa'],
+      ['29530021','Dic 2023','11268624R','1000','89.861','106.062','16,201','Reactiva'],
+      ['26047947','Jul 2022','82475','300','80991','81127','40,800','Activa'],
+      ['26047947','Jul 2022','82475R','300','27035','27117','24,600','Reactiva'],
+      ['25883333','Jun 2022','82475','300','80880','80991','33,300','Activa'],
+      ['25883333','Jun 2022','82475R','300','26948','27035','26,100','Reactiva'],
+    ].map(r => [
+      `<span class="mono dim">${r[0]}</span>`,
+      r[1],
+      `<span class="mono">${r[2]}</span>`,
+      r[3],
+      `<span class="mono dim">${r[4]}</span>`,
+      `<span class="mono dim">${r[5]}</span>`,
+      `<span class="mono" style="color:var(--blue)">${r[6]}</span>`,
+      r[7] === 'Activa'
+        ? `<span class="badge badge-green">⚡ Activa</span>`
+        : `<span class="badge badge-yellow">🔄 Reactiva</span>`
+    ])
+  );
+}
+
+function initConclusionesPage() {
+  const grid = document.getElementById('conclusions-grid');
+  D.conclusiones.forEach(c => {
+    const el = document.createElement('div');
+    el.className = `conclusion-card animate-up ${c.tipo}`;
+    el.innerHTML = `
+      <div class="conclusion-header">
+        <span class="conclusion-icon">${c.icono}</span>
+        <div class="type-${c.tipo}">
+          <div class="conclusion-type">${c.tipo.toUpperCase()}</div>
+          <div class="conclusion-title">${c.titulo}</div>
+        </div>
+      </div>
+      <p class="conclusion-text">${c.texto}</p>
+    `;
+    grid.appendChild(el);
+  });
+
+  // Resumen table
+  buildTable(
+    document.getElementById('tabla-resumen-ejecutivo'),
+    ['#','Hallazgo','Detalle','Impacto'],
+    [
+      ['1','Impacto Financiero','Multas = 1.9% del gasto total','$1.009.569 acumulados'],
+      ['2','FP Promedio','0.835 — por debajo de norma','11 meses de multa'],
+      ['3','Período Crítico','Mayo–Jul 2022: FP < 0.85','Multas > 10% costo energía'],
+      ['4','Consumo Total','844.10 MWh en 21 períodos','$62.87/kWh (2022)'],
+      ['5','Costo de Inacción','12 meses sin compensación','$504.784 adicionales'],
+      ['6','Solución Propuesta','Banco condensadores 30–50 kVAr','Payback 4–6 meses'],
+      ['7','Cambio de Medidor','Reemplazo en transición 2022→2023','Nuevo medidor más preciso'],
+      ['8','Períodos sin Lectura','Feb 2022, Ene-Feb 2024','Facturación estimada/provisional'],
+    ].map(r => [
+      `<span class="mono dim">${r[0]}</span>`, r[1],
+      `<span class="dim">${r[2]}</span>`,
+      `<strong>${r[3]}</strong>`
+    ])
+  );
+}
+
+function initROIPage() {
+  // Panel
+  const k = D.kpis;
+  document.getElementById('roi-panel-container').innerHTML = `
+    <div class="roi-panel">
+      <div>
+        <div class="roi-title">💡 Análisis de Retorno de Inversión</div>
+        <p class="roi-text">
+          La implementación de un banco de condensadores de <strong>${k.capacitorRecomendado_kVAr} kVAr</strong>
+          para compensar la energía reactiva corregiría el Factor de Potencia de <strong>${k.fpPromedio}</strong>
+          al rango óptimo de <strong>0.98+</strong>, eliminando completamente el cargo por multa reactiva.<br><br>
+          Basado en el historial de <strong>$${k.ahorroHistoricoPerdido.toLocaleString('es-CL')}</strong> en multas
+          acumuladas durante el período analizado, la inversión se amortiza en un plazo de
+          <strong>${k.paybackMeses} meses</strong>, convirtiéndose posteriormente en ahorro neto directo.
+        </p>
+      </div>
+      <div class="roi-numbers">
+        <div class="roi-stat">
+          <div class="val">${k.paybackMeses}m</div>
+          <div class="lbl">Payback estimado</div>
+        </div>
+        <div class="roi-stat">
+          <div class="val">${fmt(k.costoInaccion12m).replace('$','$')}</div>
+          <div class="lbl">Ahorro proyectado/año</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // ROI chart — acumulado
+  const conMulta = D.facturas.filter(f => f.multa > 0);
+  let acum = 0;
+  const acumData = conMulta.map(f => { acum += f.multa; return acum; });
+  new Chart(document.getElementById('chartROI'), {
+    type: 'bar',
+    data: {
+      labels: conMulta.map(f => f.mes),
+      datasets: [
+        {
+          label: 'Multa mensual ($)',
+          data: conMulta.map(f => f.multa),
+          backgroundColor: 'rgba(239,68,68,0.55)',
+          borderColor: '#ef4444',
+          borderWidth: 1,
+          borderRadius: 4,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Multasa acumuladas ($)',
+          data: acumData,
+          type: 'line',
+          borderColor: '#f97316',
+          backgroundColor: 'rgba(249,115,22,0.08)',
+          fill: true,
+          tension: 0.4,
+          borderWidth: 2,
+          pointRadius: 4,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      ...CHART_OPTS,
+      scales: {
+        x: CHART_OPTS.scales.x,
+        y: { ...CHART_OPTS.scales.y, position: 'left', title: { display: true, text: 'Multa Mensual ($)' } },
+        y1: { ...CHART_OPTS.scales.y, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Acumulado ($)' } }
+      }
+    }
+  });
+
+  // Proyección 12 meses
+  const meses = ['May','Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar','Abr'];
+  const avgMulta = Math.round(k.costoInaccion12m / 12);
+  new Chart(document.getElementById('chartProyeccion'), {
+    type: 'line',
+    data: {
+      labels: meses,
+      datasets: [
+        {
+          label: 'Sin compensación',
+          data: meses.map((_,i) => avgMulta * (i+1)),
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239,68,68,0.08)',
+          fill: true,
+          tension: 0.1,
+          borderWidth: 2
+        },
+        {
+          label: 'Con condensadores',
+          data: meses.map(() => 0),
+          borderColor: '#22c55e',
+          borderDash: [5,3],
+          borderWidth: 2,
+          pointRadius: 0
+        }
+      ]
+    },
+    options: {
+      ...CHART_OPTS,
+      plugins: {
+        ...CHART_OPTS.plugins,
+        tooltip: {
+          ...CHART_OPTS.plugins.tooltip,
+          callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmt(ctx.raw)}` }
+        }
+      }
+    }
+  });
+
+  // Desglose gasto
+  new Chart(document.getElementById('chartGastoDesglose'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Electricidad Consumida','Transporte','Demanda (Punta+Máx)','Cargos Fijos','Multas Reactiva','Otros'],
+      datasets: [{
+        data: [32000000, 8500000, 7400000, 2100000, 1009569, 900000],
+        backgroundColor: [
+          'rgba(96,165,250,0.8)',
+          'rgba(129,140,248,0.8)',
+          'rgba(34,197,94,0.8)',
+          'rgba(245,158,11,0.8)',
+          'rgba(239,68,68,0.8)',
+          'rgba(100,116,139,0.8)'
+        ],
+        borderWidth: 1,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 10, boxWidth: 12, font: { size: 11 } } },
+        tooltip: {
+          ...CHART_OPTS.plugins.tooltip,
+          callbacks: { label: ctx => ` ${ctx.label}: ${fmt(ctx.raw)}` }
+        }
+      }
+    }
+  });
+
+  // ROI table
+  buildTable(
+    document.getElementById('tabla-roi'),
+    ['Período','Gasto Real','¿Con Multa?','Multa ($)','Gasto Proyectado (sin multa)','Ahorro Potencial'],
+    D.facturas.map(f => {
+      const sinMulta = f.total - f.multa;
+      return [
+        f.mes,
+        `<span class="mono">${fmt(f.total)}</span>`,
+        f.multa > 0
+          ? `<span class="badge badge-red">SI</span>`
+          : `<span class="badge badge-green">NO</span>`,
+        f.multa > 0
+          ? `<span style="color:var(--red);font-family:var(--font-mono)">${fmt(f.multa)}</span>`
+          : '<span class="dim">—</span>',
+        `<span class="mono dim">${fmt(sinMulta)}</span>`,
+        f.multa > 0
+          ? `<span style="color:var(--green);font-weight:600">+${fmt(f.multa)}</span>`
+          : '<span class="dim">—</span>'
+      ];
+    })
+  );
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const charts = {};
+function showPage(pageId, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + pageId).classList.add('active');
+  btn.classList.add('active');
+
+  // Lazy-init pages
+  if (pageId === 'reactiva' && !charts.reactiva) {
+    charts.reactiva = true;
+    initReactivaPage();
+  }
+  if (pageId === 'consumo' && !charts.consumo) {
+    charts.consumo = true;
+    initConsumoPage();
+  }
+  if (pageId === 'conclusiones' && !charts.conclusiones) {
+    charts.conclusiones = true;
+    initConclusionesPage();
+  }
+  if (pageId === 'roi' && !charts.roi) {
+    charts.roi = true;
+    initROIPage();
+  }
+  if (pageId === 'facturas' && !charts.facturas) {
+    charts.facturas = true;
+    initFacturasTable();
+  }
+}
+
+function showTab(groupId, tabId, btn) {
+  const group = document.querySelectorAll(`[id^='tabpanel-']`);
+  group.forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btn.closest('.tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initClientMeta();
+  initKPIs();
+  initDashboardCharts();
+  initFacturasTable(); // pre-render for nav
+  charts.facturas = true;
+});
+</script>
+</body>
+</html>
