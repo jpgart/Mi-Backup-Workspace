@@ -32,7 +32,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Desplegamos la carpeta de la nueva app estática V3
+          # Desplegamos la carpeta de la nueva app estática V3 (Vogt Dashboard)
           path: './analytics-system/apps/vogt-dashboard'
           
       - name: Deploy to GitHub Pages
