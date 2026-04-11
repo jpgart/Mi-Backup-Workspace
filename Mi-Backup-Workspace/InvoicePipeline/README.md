@@ -1,14 +1,25 @@
 # InvoicePipeline 📊
 
-Pipeline automatizado para el procesamiento de facturas eléctricas (Enel - Chile).
+Pipeline automatizado de alto rendimiento para el procesamiento, extracción y análisis de facturas eléctricas (Enel - Chile).
 
 ## ¿Qué hace?
 
-1. **Parsea PDFs** → Convierte facturas PDF a JSON (solo primera página)
-2. **Extrae datos** → Genera `Consolidado.csv` con datos maestros y `Medidores.csv` con lecturas
-3. **Analiza consumo** → Genera `Consumo_P.csv` con desglose detallado de cobros
-4. **Calcula reactiva** → Genera `Calculo_Reactiva.csv` con Factor de Potencia y multas estimadas
-5. **Resumen analítico** → Genera `Resumen_Cliente.csv` con datos cruzados y verificaciones
+1.  **Parsea PDFs** → Convierte facturas PDF a JSON (solo primera página para velocidad).
+2.  **Extracción de Datos Maestros** → Genera `Consolidado.csv` (encabezados, RUT, fechas) y `Medidores.csv` (lecturas de activa y reactiva).
+3.  **Análisis de Consumo Detallado** → Genera `Consumo_P.csv` con integridad total de datos (captura todas las líneas de cobro).
+4.  **Cálculo de Energía Reactiva** → Genera `Calculo_Reactiva.csv` con Factor de Potencia (FP) y multas estimadas según la normativa chilena.
+5.  **Resumen Analítico (Master Report)** → Genera `Resumen_Cliente.csv` con 33 columnas de datos cruzados, KPI financieros y verificaciones automáticas.
+
+## Novedades v1.1 — Integridad y Control
+
+Hemos implementado un sistema de **Integridad Total** para garantizar que no se pierda información crítica durante el OCR:
+
+*   **Captura de Líneas No Reconocidas**: Cualquier línea de texto que no encaje en los patrones conocidos se captura y se marca explícitamente como `⚠️ LÍNEA NO RECONOCIDA` para revisión manual.
+*   **Alerta de Consumo Cero**: Si una factura no contiene datos de consumo eléctrico (kWh=0), el sistema levanta una `🔴 ALERTA` visual tanto en el CSV de consumo como en el resumen macro.
+*   **Extracción Financiera Robusta**:
+    *   **Saldo Anterior**: Identifica la deuda real acumulada de períodos previos.
+    *   **Total a Pagar**: Rescata el monto definitivo a cancelar, incluso en formatos heredados (2022) o modernos (2024).
+*   **Verificación de Energía**: Cruce automático entre la energía facturada y la medida por el contador.
 
 ## Uso
 
@@ -16,51 +27,41 @@ Pipeline automatizado para el procesamiento de facturas eléctricas (Enel - Chil
 # Instalar dependencias
 npm install
 
-# Ejecutar pipeline completo
+# Ejecutar pipeline interactivo (Selección de cliente y análisis)
 npm start
 
-# Solo parsear PDFs (sin análisis)
-npm run parse
-
-# Solo analizar JSONs existentes (sin re-parsear)
+# Ejecutar solo análisis de JSONs existentes
 npm run analyze
 ```
 
-## Estructura de Datos
+## Estructura de Salida
+
+Los resultados se organizan por cliente en la carpeta del proyecto `my-liteparse-project`:
 
 ```
-my-liteparse-project/data/
-├── input_pdfs/
-│   ├── ENEL -VOGT 2022 - 2024/   ← PDFs de cada cliente
-│   └── ...
-└── output_json/
-    ├── ENEL -VOGT 2022 - 2024/    ← JSONs + CSVs del cliente
-    │   ├── *.json
-    │   ├── Consolidado.csv
-    │   ├── Medidores.csv
-    │   ├── Consumo_P.csv
-    │   ├── Calculo_Reactiva.csv
-    │   └── Resumen_Cliente.csv
-    └── ...
+data/output_json/[CLIENTE]/csv/
+├── [CLIENTE] - Consolidado.csv
+├── [CLIENTE] - Medidores.csv
+├── [CLIENTE] - Consumo_P.csv       ← Detalle con alertas de integridad
+├── [CLIENTE] - Calculo_Reactiva.csv
+└── [CLIENTE] - Resumen_Cliente.csv ← Reporte maestro con 33 columnas
 ```
 
-## Datos Analíticos Extraídos
+## KPI y Verificaciones en el Reporte Maestro
 
-El `Resumen_Cliente.csv` incluye:
+El `Resumen_Cliente.csv` permite una auditoría rápida mediante las siguientes verificaciones:
 
-- **Tarifa estimada por kWh** (Costo Electricidad / kWh consumidos)
-- **% Transporte sobre Neto** (esperado: 8-10%)
-- **Factor de Potencia calculado** con clasificación (Eficiente/Ineficiente/Crítico)
-- **Multa reactiva en pesos** (ya no "PENDIENTE")
-- **Verificación IVA** (Neto × 19% = IVA declarado)
-- **Verificación Total** (Neto + IVA ≈ Total)
-- **Ahorro potencial** por corrección de FP
+*   **Verificación Energía**: Detecta discrepancias entre facturación y medición (o alertas de consumo cero).
+*   **Total a Pagar ($)**: Columna dedicada para control de flujo de caja.
+*   **Tarifa$/kWh**: Costo unitario real estimado para el período.
+*   **Factor de Potencia (FP)**: Clasificación (Eficiente/Ineficiente/Crítico) y multa estimada.
+*   **Ahorro Potencial**: Cuantificación monetaria del beneficio al corregir el FP.
+*   **Verificación IVA/Total**: Comprobación matemática de la consistencia contable del documento.
+*   **Alerta Transporte**: Detecta si el % de transporte sobre el neto sale del rango esperado (8-10%).
 
-## Basado en
+## Arquitectura
 
-Scripts originales del proyecto `Enel_Parser`, mejorados con:
-- Arquitectura modular
-- Selección interactiva de carpetas
-- Solo primera página de PDF
-- Output organizado por cliente
-- Resumen analítico con verificaciones
+*   **TypeScript**: Código robusto y tipado.
+*   **Modular**: Lógica separada por responsabilidades (Extractor, Consumo, Reactiva, Resumen).
+*   **Agnóstico**: Diseñado para soportar múltiples clientes compartiendo la misma lógica de negocio.
+*   **Resiliente**: Capaz de procesar facturas Enel legacy (2022) y actuales (2024) sin cambios manuales.

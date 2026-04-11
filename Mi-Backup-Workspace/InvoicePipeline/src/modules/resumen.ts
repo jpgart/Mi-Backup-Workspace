@@ -110,6 +110,9 @@ export async function generarResumen(outputDir: string, clientProjectName: strin
     let costoArriendo = 0;
     let costoServPublico = 0;
     let kwhFacturado = 0;
+    let saldoAnterior = 0;
+    let totalAPagar = 0;
+    let tieneAlertaConsumo = false;
 
     for (const c of consumos) {
       const concepto = (c['Concepto'] || '').toLowerCase();
@@ -128,6 +131,10 @@ export async function generarResumen(outputDir: string, clientProjectName: strin
       else if (concepto.includes('administración') || concepto.includes('cargo fijo')) costoCargoFijo = gasto;
       else if (concepto.includes('arriendo')) costoArriendo = gasto;
       else if (concepto.includes('servicio público') || concepto.includes('servicio publico')) costoServPublico = gasto;
+      else if (concepto.includes('saldo anterior')) saldoAnterior = gasto;
+      else if (concepto.includes('total a pagar')) totalAPagar = gasto;
+      // Detectar si Consumo_P levantó una alerta de energía cero para esta factura
+      if (concepto.includes('alerta') && concepto.includes('electricidad consumida')) tieneAlertaConsumo = true;
     }
 
     // Verificación de Energía: Consumo_P vs Medidores
@@ -138,6 +145,12 @@ export async function generarResumen(outputDir: string, clientProjectName: strin
       alertCount++;
     } else if (kwhFacturado > 0 && kwhActiva === 0) {
       verificacionEnergia = `ERROR (Faltan Medidores para ${kwhFacturado} kWh)`;
+      alertCount++;
+    } else if (kwhFacturado === 0 && kwhActiva === 0) {
+      // Ambas fuentes dicen 0 kWh → alerta: puede ser falla de OCR o factura sin consumo real
+      verificacionEnergia = tieneAlertaConsumo
+        ? '🔴 ALERTA: Sin Electricidad Consumida en PDF (medición = 0)'
+        : '⚠️ Sin consumo eléctrico registrado (0 kWh en ambas fuentes)';
       alertCount++;
     }
 
@@ -181,6 +194,8 @@ export async function generarResumen(outputDir: string, clientProjectName: strin
       iva: iva > 0 ? formatCLP(iva) : '',
       monto_exento: montoExento > 0 ? formatCLP(montoExento) : '',
       monto_total: montoTotal > 0 ? formatCLP(montoTotal) : '',
+      saldo_anterior: saldoAnterior > 0 ? formatCLP(saldoAnterior) : '',
+      total_a_pagar: totalAPagar > 0 ? formatCLP(totalAPagar) : '',
       kwh_facturado: kwhFacturado.toString(),
       kwh_activa: kwhActiva.toString(),
       kvarh_reactiva: kvarhReactiva.toString(),
@@ -221,6 +236,8 @@ export async function generarResumen(outputDir: string, clientProjectName: strin
       { id: 'iva', title: 'IVA ($)' },
       { id: 'monto_exento', title: 'Monto Exento ($)' },
       { id: 'monto_total', title: 'Monto Total ($)' },
+      { id: 'saldo_anterior', title: 'Saldo Anterior ($)' },
+      { id: 'total_a_pagar', title: 'Total a Pagar ($)' },
       { id: 'kwh_facturado', title: 'kWh Facturado (Consumo_P)' },
       { id: 'kwh_activa', title: 'kWh Medido (Medidores)' },
       { id: 'kvarh_reactiva', title: 'kVARh Medido (Medidores)' },
@@ -249,7 +266,7 @@ export async function generarResumen(outputDir: string, clientProjectName: strin
   });
 
   await csvWriter.writeRecords(resumenRecords);
-  console.log(`   📈 Resumen: ${resumenRecords.length} facturas con 31 columnas analíticas`);
+  console.log(`   📈 Resumen: ${resumenRecords.length} facturas con 33 columnas analíticas (incl. Saldo Anterior y Total a Pagar)`);
   if (alertCount > 0) console.log(`   ⚠️  ${alertCount} alertas detectadas (ver columnas de verificación)`);
 
   return { facturaCount: resumenRecords.length, alertCount };

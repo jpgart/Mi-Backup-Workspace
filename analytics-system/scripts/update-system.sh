@@ -15,6 +15,10 @@ mkdir -p "$REPORT_DIR"
 
 echo "🚀 Iniciando actualización y rediseño de reportes..."
 
+# Sincronizar y generar vogt.js para el dashboard interactivo
+export PATH="/opt/homebrew/bin:$PATH"
+npx tsx "$ANALYTICS_DIR/scripts/generate-vogt-js.ts"
+
 # 2. Sincronizar
 cp "$SOURCE_DIR/"*.csv "$DATA_DIR/"
 
@@ -33,10 +37,10 @@ format_money() {
 
 # 3. Cálculos Base
 TOTAL_MONTO=$(awk -F',' 'NR>1 {gsub(/\./,"",$9); sum+=$9} END {printf "%.0f", sum}' "$CSV_RESUMEN")
-TOTAL_KWH=$(awk -F',' 'NR>1 {sum+=$10} END {printf "%.0f", sum}' "$CSV_RESUMEN")
+TOTAL_KWH=$(awk -F',' 'NR>1 {gsub(/\./,"",$12); sum+=$12} END {printf "%.0f", sum}' "$CSV_RESUMEN")
 TOTAL_MWH=$(echo "scale=2; $TOTAL_KWH / 1000" | bc)
-PENALTIES_COUNT=$(grep -i "SI" "$CSV_RESUMEN" | wc -l)
-TOTAL_MULTAS=$(grep -i "SI" "$CSV_RESUMEN" | awk -F',' '{gsub(/\./,"",$18); sum+=$18} END {printf "%.0f", sum}')
+PENALTIES_COUNT=$(grep -i ",SI," "$CSV_RESUMEN" | wc -l)
+TOTAL_MULTAS=$(grep -i ",SI," "$CSV_RESUMEN" | awk -F',' '{gsub(/\./,"",$20); sum+=$20} END {printf "%.0f", sum}')
 
 FMT_MONTO=$(format_money $TOTAL_MONTO)
 FMT_MULTAS=$(format_money $TOTAL_MULTAS)
@@ -129,15 +133,15 @@ cat > "$REPORT_HTML" <<EOF
                 <tbody>
                     $(awk -F',' 'NR>1 {
                         m=$2;
-                        k=$10/1000;
+                        k=$12/1000;
                         r=$9; gsub(/\./,"",r);
-                        p=$18; gsub(/\./,"",p);
+                        p=$20; gsub(/\./,"",p);
                         proj=r-p;
                         
                         # Formatear números en la tabla usando awk puro
                         f_r=r; res_r=""; for(i=0;i<length(f_r);i++) { res_r = substr(f_r,length(f_r)-i,1) res_r; if((i+1)%3==0 && i+1<length(f_r)) res_r = "." res_r; }
                         f_p=proj; res_p=""; for(i=0;i<length(f_p);i++) { res_p = substr(f_p,length(f_p)-i,1) res_p; if((i+1)%3==0 && i+1<length(f_p)) res_p = "." res_p; }
-                        f_s=$18; res_s=""; gsub(/\./,"",f_s); if(f_s=="") f_s=0; for(i=0;i<length(f_s);i++) { res_s = substr(f_s,length(f_s)-i,1) res_s; if((i+1)%3==0 && i+1<length(f_s)) res_s = "." res_s; }
+                        f_s=$20; res_s=""; gsub(/\./,"",f_s); if(f_s=="") f_s=0; for(i=0;i<length(f_s);i++) { res_s = substr(f_s,length(f_s)-i,1) res_s; if((i+1)%3==0 && i+1<length(f_s)) res_s = "." res_s; }
 
                         printf "<tr><td>%s</td><td>%.2f MWh</td><td>$%s</td><td>$%s</td><td style=\"color:#16a34a; font-weight:bold;\">+$%s</td></tr>\n", $2, k, res_r, res_p, res_s
                     }' "$CSV_RESUMEN")
